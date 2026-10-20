@@ -1,0 +1,76 @@
+name: Radar health check
+
+# Runs on every change and once a month. It validates the data, checks that the
+# dashboard, CSV and report table are in sync with data/trends.json, and keeps one
+# "Radar review due" issue up to date when a quarterly review is overdue or a
+# watchlist date has passed without being acknowledged (watchlist[].reviewed_at).
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 6 1 * *"   # 1st of each month, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+defaults:
+  run:
+    # Explicit bash makes GitHub use "bash -eo pipefail", so a failing
+    # command piped into tee still fails the step.
+    shell: bash
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate data
+        run: |
+          set -o pipefail
+          python tools/radar.py validate | tee validate.txt
+          {
+            echo "## Radar health check"
+            echo '```'
+            cat validate.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check generated files are in sync with the data
+        run: |
+          python tools/radar.py csv
+          python tools/radar.py build
+          python tools/radar.py table
+          git diff --exit-code -- docs/index.html data/trends.csv report/radar_table.tex \
+            || (echo "Run 'python tools/radar.py all', recompile the report and commit." && exit 1)
+
+      - name: Open or update the review issue when something is due
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! grep -q "^WARN" validate.txt; then
+            echo "Nothing due."
+            exit 0
+          fi
+          {
+            echo "Radar check of $(date -u +%Y-%m-%d) found items that need a review:"
+            echo
+            grep "^WARN" validate.txt | sed 's/^WARN /- /'
+            echo
+            echo "Update data/trends.json (new dated source + rationale, or set watchlist[].reviewed_at),"
+            echo "run \`python tools/radar.py all\`, recompile the report, commit, and close this issue."
+          } > body.md
+          title="Radar review due"
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file body.md
+            echo "Updated issue #$number"
+          else
+            gh issue create --title "$title" --body-file body.md
+          fi
