@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLUE Trend Radar</title>
+<meta name="description" content="Technology trend radar for BLUE Engineering: smart, sustainable and circular commercial mobility, horizon 2031-2036.">
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --surface-2:#eef1f5; --ink:#14202e; --ink-2:#4a5767; --ink-3:#7a8696;
+  --line:#d9dee5; --brand:#0b3d91; --brand-soft:#e3ebf8;
+  --engage:#0b3d91; --build:#3f7cc4; --monitor:#9db6d6;
+  --core:#0b3d91; --adjacent:#0f8a7e; --transf:#c2410c;
+  --warn:#9a6700; --ok:#18794e;
+  --ring1:#e8eef8; --ring2:#f1f5fb; --ring3:#f8fafd;
+  --shadow:0 1px 2px rgba(20,32,46,.06),0 4px 16px rgba(20,32,46,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e141c; --surface:#151d28; --surface-2:#1c2633; --ink:#e7edf5; --ink-2:#b2bdcb; --ink-3:#7f8b9b;
+    --line:#2a3646; --brand:#7fb0ff; --brand-soft:#1b2a40;
+    --engage:#7fb0ff; --build:#4f86c9; --monitor:#33506f;
+    --core:#7fb0ff; --adjacent:#3cc4b3; --transf:#f08a4b;
+    --warn:#e3b341; --ok:#4ac68a;
+    --ring1:#1a2738; --ring2:#17212f; --ring3:#141c27;
+    --shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+a{color:var(--brand)}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 16px 48px}
+header .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+header h1{font-size:30px;line-height:1.15;margin:6px 0 6px;letter-spacing:-.01em}
+header p.lede{margin:0;color:var(--ink-2);max-width:760px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .v{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.kpi .l{font-size:13px;color:var(--ink-2)}
+.kpi.next .v{font-size:17px;line-height:1.3}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+.radar-card{padding:16px}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.toolbar .lab{font-size:12px;color:var(--ink-3);margin-right:4px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:4px 11px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+@media (prefers-color-scheme: dark){.chip[aria-pressed="true"]{color:#0e141c}}
+svg.radar{width:100%;height:auto;display:block}
+.blip{cursor:pointer;outline:none}
+.blip .halo{opacity:0;transition:opacity .15s}
+.blip:hover .halo,.blip:focus .halo,.blip.sel .halo{opacity:1}
+.blip.dim{opacity:.18}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink-2);margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.detail{padding:20px 22px;position:sticky;top:12px}
+.detail h2{margin:2px 0 6px;font-size:22px;line-height:1.2}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.tag{font-size:12px;border-radius:6px;padding:2px 8px;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.tag.core{color:var(--core)} .tag.adjacent{color:var(--adjacent)} .tag.transformative{color:var(--transf)}
+.tag.prov{color:var(--warn);border-color:var(--warn)} .tag.sup{color:var(--ok)}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.meter{background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.meter .t{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.meter .val{font-size:20px;font-weight:700;margin:2px 0 6px}
+.cells{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+.cells i{height:8px;border-radius:2px;background:var(--line)}
+.cells i.on{background:var(--brand)}
+.cells i.assume{background:transparent;border:1.5px dashed var(--ink-3)}
+.meter .s{font-size:12.5px;color:var(--ink-2);margin-top:6px}
+.sec{margin-top:12px}
+.sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin:0 0 3px}
+.sec p{margin:0;color:var(--ink)}
+.dbx{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.src{list-style:none;padding:0;margin:4px 0 0}
+.src li{font-size:13.5px;padding:5px 0;border-top:1px solid var(--line);display:flex;gap:8px;align-items:baseline}
+.src .ty{font-size:11px;color:var(--ink-3);white-space:nowrap;min-width:92px}
+.src .no{font-size:11px;color:var(--warn)}
+section.block{margin-top:22px}
+section.block>h2{font-size:20px;margin:0 0 10px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr{cursor:pointer}
+.tbl tr:hover td{background:var(--surface-2)}
+.tbl .num{font-variant-numeric:tabular-nums;font-weight:600}
+.scroll{overflow-x:auto}
+.timeline{padding:18px 18px 8px}
+.tl-svg{width:100%;height:auto;display:block}
+.events{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
+.ev{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface-2)}
+.ev .d{font-weight:700;font-size:13px}
+.ev .e{font-size:13.5px;color:var(--ink-2)}
+.ev.past{opacity:.55}
+.proposal{padding:22px}
+.proposal .kick{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.proposal h2{margin:4px 0 2px;font-size:24px}
+.proposal .sub{color:var(--ink-2);margin:0 0 14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.rq{border-left:3px solid var(--brand);background:var(--brand-soft);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
+ol.wp,ul.km{margin:4px 0 0;padding-left:20px}
+ol.wp li,ul.km li{margin:3px 0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0}
+.flow .n{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px}
+.flow .a{color:var(--ink-3)}
+.flow .dec{display:flex;gap:4px}
+.flow .dec span{background:var(--brand);color:#fff;border-radius:6px;padding:4px 8px;font-size:12px}
+@media (prefers-color-scheme: dark){.flow .dec span{color:#0e141c}}
+.drivers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.drv{padding:14px 16px}
+.drv h3{font-size:15px;margin:0 0 6px}
+.drv p{margin:0;font-size:14px;color:var(--ink-2)}
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.method .card{padding:14px 16px;font-size:14px}
+.method h3{font-size:15px;margin:0 0 6px}
+.method dl{margin:0} .method dt{font-weight:600} .method dd{margin:0 0 6px;color:var(--ink-2)}
+footer{margin-top:28px;font-size:13px;color:var(--ink-3)}
+.sr{position:absolute;left:-9999px}
+@media (max-width:900px){
+  .grid,.two,.drivers,.method{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .detail{position:static}
+  header h1{font-size:24px}
+}
+@media (max-width:520px){.meters,.dbx{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">BLUE Engineering · R&amp;D Trend Radar · Automotive</div>
+    <h1>Smart, sustainable &amp; circular commercial mobility</h1>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid">
+    <div class="card radar-card">
+      <div class="toolbar" id="filters" aria-label="Filters"></div>
+      <svg class="radar" id="radar" viewBox="0 0 640 640" role="img" aria-label="Trend radar"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside class="card detail" id="detail" aria-live="polite"></aside>
+  </div>
+
+  <section class="block">
+    <h2>All trends</h2>
+    <div class="card scroll"><table class="tbl" id="table"></table></div>
+  </section>
+
+  <section class="block">
+    <h2>Watchlist: dates that trigger a review</h2>
+    <div class="card timeline"><svg class="tl-svg" id="tl" viewBox="0 0 1000 120" role="img" aria-label="Watchlist timeline"></svg><div class="events" id="events"></div></div>
+  </section>
+
+  <section class="block">
+    <div class="card proposal" id="proposal"></div>
+  </section>
+
+  <section class="block">
+    <h2>Why these trends matter by 2031–2036</h2>
+    <div class="drivers" id="drivers"></div>
+  </section>
+
+  <section class="block">
+    <h2>Method</h2>
+    <div class="method" id="method"></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = /*__RADAR_DATA__*/null;
+(function(){
+"use strict";
+if(!DATA){document.body.innerHTML="<p style='padding:24px'>No data embedded. Run <code>python tools/radar.py build</code>.</p>";return;}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const T=DATA.trends;
+const RINGS=["Engage now","Build capability","Monitor"];
+const SECTORS=["Electrification","Digital twins & validation","AI & automation","Circularity"];
+const CLS={Core:"core",Adjacent:"adjacent",Transformative:"transformative"};
+const TYPE={regulation:"Regulation",eu_official:"EU official",project_report:"Project report",company_press:"Company release",vendor:"Vendor",public_authority:"Public authority",academic:"Academic",news:"News"};
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let state={sel:"T06",ring:null,cls:null};
+
+function fmtDate(s,prec){const p=String(s).split("-").map(Number);
+  if(p.length===1)return String(p[0]);
+  if(p.length===2||prec==="month")return (prec==="month"?"mid-":"")+MONTHS[p[1]-1]+" "+p[0];
+  return p[2]+" "+MONTHS[p[1]-1]+" "+p[0];}
+function toDate(s){const p=String(s).split("-").map(Number);if(p.length===1)return new Date(p[0],11,31);if(p.length===2)return new Date(p[0],p[1],0);return new Date(p[0],p[1]-1,p[2]);}
+const today=new Date();
+
+/* header + kpis */
+const m=DATA.meta;
+$("#lede").textContent=`${T.length} technology trends for zero-emission buses, coaches, vans and trucks, assessed for BLUE's R&D over ${m.horizon}. Each trend shows two separate things: how mature the technology already is in industry, and where BLUE could still do research.`;
+const cnt=r=>T.filter(t=>t.ring===r).length;
+const upcoming=DATA.watchlist.map(w=>({...w,d:toDate(w.date)})).filter(w=>w.d>=new Date(today.getFullYear(),today.getMonth(),today.getDate())).sort((a,b)=>a.d-b.d);
+const nx=upcoming[0];
+$("#kpis").innerHTML=
+  `<div class="kpi"><div class="v">${cnt("Engage now")}</div><div class="l">Engage now: act in the next proposal cycle</div></div>`+
+  `<div class="kpi"><div class="v">${cnt("Build capability")}</div><div class="l">Build capability: demand in 2–5 years</div></div>`+
+  `<div class="kpi"><div class="v">${cnt("Monitor")}</div><div class="l">Monitor: track signals only</div></div>`+
+  (nx?`<div class="kpi next"><div class="v">${esc(fmtDate(nx.date,nx.precision))}</div><div class="l">Next review trigger: ${esc(nx.event)}</div></div>`:`<div class="kpi"><div class="v">–</div><div class="l">No upcoming triggers</div></div>`);
+
+/* filters */
+function chipRow(){
+  const f=$("#filters");
+  let h=`<span class="lab">Ring</span>`;
+  RINGS.forEach(r=>h+=`<button class="chip" data-k="ring" data-v="${r}" aria-pressed="${state.ring===r}">${r}</button>`);
+  h+=`<span class="lab" style="margin-left:8px">Class</span>`;
+  Object.keys(CLS).forEach(c=>h+=`<button class="chip" data-k="cls" data-v="${c}" aria-pressed="${state.cls===c}">${c}</button>`);
+  f.innerHTML=h;
+  f.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const k=b.dataset.k,v=b.dataset.v;state[k]=state[k]===v?null:v;chipRow();drawRadar();drawTable();});
+}
+const visible=t=>(!state.ring||t.ring===state.ring)&&(!state.cls||t.classification===state.cls);
+
+/* radar */
+const C=320,R=[34,160,236,298];
+function polar(r,deg){const a=(deg-90)*Math.PI/180;return [C+r*Math.cos(a),C+r*Math.sin(a)];}
+function shape(cls,x,y,s,fill,stroke,dash){
+  const st=`fill="${fill}" stroke="${stroke}" stroke-width="2.4"${dash?' stroke-dasharray="3 2.5"':""}`;
+  if(cls==="Core")return `<circle cx="${x}" cy="${y}" r="${s}" ${st}/>`;
+  if(cls==="Adjacent")return `<rect x="${x-s*.9}" y="${y-s*.9}" width="${s*1.8}" height="${s*1.8}" rx="3" transform="rotate(45 ${x} ${y})" ${st}/>`;
+  return `<path d="M${x} ${y-s*1.15} L${x+s*1.1} ${y+s*.8} L${x-s*1.1} ${y+s*.8}Z" ${st} stroke-linejoin="round"/>`;
+}
+function colorOf(cls){return getComputedStyle(document.documentElement).getPropertyValue({Core:"--core",Adjacent:"--adjacent",Transformative:"--transf"}[cls]).trim();}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function layout(){
+  const pos={};
+  SECTORS.forEach((s,si)=>{
+    RINGS.forEach((r,ri)=>{
+      const items=T.filter(t=>t.sector===s&&t.ring===r);
+      items.forEach((t,k)=>{
+        const ang=si*90+(k+1)*90/(items.length+1);
+        const rad=(R[ri]+R[ri+1])/2+(items.length>1?(k%2?14:-14):0);
+        pos[t.id]=polar(rad,ang);
+      });
+    });
+  });
+  return pos;
+}
+function drawRadar(){
+  const svg=$("#radar"),pos=layout();
+  let h="";
+  [[3,"--ring3"],[2,"--ring2"],[1,"--ring1"]].forEach(([i,v])=>h+=`<circle cx="${C}" cy="${C}" r="${R[i]}" fill="${css(v)}" stroke="${css("--line")}"/>`);
+  h+=`<circle cx="${C}" cy="${C}" r="${R[0]}" fill="${css("--surface")}" stroke="${css("--line")}"/><text x="${C}" y="${C+4}" text-anchor="middle" font-size="11" font-weight="700" fill="${css("--brand")}">BLUE</text>`;
+  for(let i=0;i<4;i++){const [x,y]=polar(R[3],i*90);h+=`<line x1="${C}" y1="${C}" x2="${x}" y2="${y}" stroke="${css("--line")}"/>`;}
+  RINGS.forEach((r,i)=>{h+=`<text x="${C+4}" y="${C-R[i+1]+15}" font-size="11.5" fill="${css("--ink-3")}" font-weight="600" letter-spacing=".04em">${r.toUpperCase()}</text>`;});
+  const lab=[[ -1,-1,"start"],[1,-1,"end"],[1,1,"end"],[-1,1,"start"]];
+  const anchors=[[18,24,"start"],[622,24,"end"],[622,628,"end"],[18,628,"start"]];
+  // sectors clockwise from top: 0 = top-right quadrant
+  const sectorAnchor=[[622,24,"end"],[622,628,"end"],[18,628,"start"],[18,24,"start"]];
+  SECTORS.forEach((s,i)=>{const [x,y,a]=sectorAnchor[i];h+=`<text x="${x}" y="${y}" text-anchor="${a}" font-size="14" font-weight="700" fill="${css("--ink-2")}">${esc(s)}</text>`;});
+  // label placement with simple collision avoidance
+  const boxes=T.map(t=>{const [x,y]=pos[t.id];return {x:x-16,y:y-16,w:32,h:32};});
+  const hit=(a,b)=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;
+  const labels={};
+  T.forEach(t=>{
+    const [x,y]=pos[t.id],w=t.short_name.length*6.3,hh=14;
+    const cands=[[x,y+30,"middle"],[x,y-21,"middle"],[x+20,y+4,"start"],[x-20,y+4,"end"],[x,y+44,"middle"],[x,y-35,"middle"]];
+    for(const [lx,ly,a] of cands){
+      const bx=a==="middle"?lx-w/2:a==="start"?lx:lx-w, b={x:bx,y:ly-11,w:w,h:hh};
+      if(b.x<4||b.x+b.w>636||boxes.some(o=>hit(o,b)))continue;
+      boxes.push(b);labels[t.id]=[lx,ly,a];break;
+    }
+    if(!labels[t.id])labels[t.id]=[x,y+30,"middle"];
+  });
+  T.forEach((t,i)=>{
+    const [x,y]=pos[t.id],col=colorOf(t.classification),prov=t.evidence_status==="provisional";
+    const [lx,ly,la]=labels[t.id];
+    const sel=state.sel===t.id?" sel":"",dim=visible(t)?"":" dim";
+    h+=`<g class="blip${sel}${dim}" tabindex="0" role="button" data-id="${t.id}" aria-label="${esc(t.short_name)}, ${esc(t.ring)}, ${esc(t.classification)}, TRL ${t.state_of_art.trl}">`+
+       `<circle class="halo" cx="${x}" cy="${y}" r="22" fill="${col}" opacity=".15"/>`+
+       shape(t.classification,x,y,13,prov?css("--surface"):col,col,prov)+
+       `<text x="${x}" y="${y+4.5}" text-anchor="middle" font-size="12" font-weight="700" fill="${prov?col:css("--surface")}">${i+1}</text>`+
+       `<text x="${lx}" y="${ly}" text-anchor="${la}" font-size="11.5" fill="${css("--ink-2")}" paint-order="stroke" stroke="${css("--ring1")}" stroke-width="3">${esc(t.short_name)}</text></g>`;
+  });
+  svg.innerHTML=h;
+  svg.querySelectorAll(".blip").forEach(g=>{
+    const go=()=>{state.sel=g.dataset.id;drawRadar();drawDetail();drawTable();};
+    g.onclick=go;g.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}};
+  });
+}
+function legend(){
+  const sw=(cls,prov)=>{const c=colorOf(cls);return `<svg width="20" height="20" viewBox="0 0 30 30" aria-hidden="true">${shape(cls,15,15,9,prov?css("--surface"):c,c,prov)}</svg>`;};
+  $("#legend").innerHTML=`<span>${sw("Core")}Core</span><span>${sw("Adjacent")}Adjacent</span><span>${sw("Transformative")}Transformative</span><span>${sw("Core",true)}Hollow = TRL provisional</span>`;
+}
+
+/* detail */
+function cells(n,assume){let h="";for(let i=1;i<=9;i++)h+=`<i class="${i<=n?(assume?"assume":"on"):""}"></i>`;return `<div class="cells" aria-hidden="true">${h}</div>`;}
+function drawDetail(){
+  const t=T.find(x=>x.id===state.sel);if(!t)return;
+  const f=t.rd_frontier,sm=f.starting_maturity;
+  const srcs=t.sources.map(s=>`<li><span class="ty">${esc(TYPE[s.type]||s.type)}</span><span><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>${s.access_status!=="opened"?` <span class="no">(not re-read)</span>`:""}</span></li>`).join("");
+  $("#detail").innerHTML=
+   `<div class="eyebrow" style="font-size:12px;color:var(--ink-3);font-weight:600">${esc(t.id)} · ${esc(t.sector)}</div>`+
+   `<h2>${esc(t.name)}</h2>`+
+   `<div class="tags"><span class="tag ${CLS[t.classification]}">${esc(t.classification)}</span><span class="tag">${esc(t.ring)}</span>`+
+   `<span class="tag ${t.evidence_status==="provisional"?"prov":"sup"}">TRL ${t.evidence_status}</span><span class="tag">Confidence: ${esc(t.confidence)}</span></div>`+
+   `<p style="margin:0;color:var(--ink-2)">${esc(t.description)}</p>`+
+   `<div class="meters">`+
+     `<div class="meter"><div class="t">Industry maturity</div><div class="val">TRL ${t.state_of_art.trl}</div>${cells(t.state_of_art.trl)}<div class="s">${esc(t.state_of_art.application)}</div></div>`+
+     `<div class="meter"><div class="t">BLUE R&amp;D opportunity</div><div class="val">${sm==null?"Starting point to establish":"Start ≈ TRL "+sm}</div>${sm==null?cells(0):cells(sm,true)}<div class="s">${esc(f.application)}<br><em>${sm==null?"":"Assumption, to be validated."}</em></div></div>`+
+   `</div>`+
+   `<div class="sec"><h3>Evidence</h3><p>${esc(t.state_of_art.evidence)}</p></div>`+
+   `<div class="sec"><h3>Outlook 2031–2036 (scenario)</h3><p>${esc(t.expected_evolution_2031_2036)}</p></div>`+
+   `<div class="sec dbx"><div><h3>Driver</h3><p>${esc(t.driver)}</p></div><div><h3>Barrier</h3><p>${esc(t.barrier)}</p></div></div>`+
+   `<div class="sec"><h3>Why “${esc(t.ring)}”</h3><p>${esc(t.ring_why)}</p></div>`+
+   `<div class="sec"><h3>Signpost to watch</h3><p>${esc(t.signpost)}</p></div>`+
+   (t.open_check?`<div class="sec"><h3>Open check</h3><p>${esc(t.open_check)}</p></div>`:"")+
+   `<div class="sec"><h3>Sources (${t.sources.length})</h3><ul class="src">${srcs}</ul></div>`;
+}
+
+/* table */
+function drawTable(){
+  let h=`<thead><tr><th>#</th><th>Trend</th><th>Sector</th><th>Class</th><th>Ring</th><th>Industry TRL</th><th>R&amp;D frontier</th></tr></thead><tbody>`;
+  T.forEach((t,i)=>{if(!visible(t))return;
+    h+=`<tr data-id="${t.id}"${state.sel===t.id?' style="outline:2px solid var(--brand);outline-offset:-2px"':""}><td class="num">${i+1}</td><td><strong>${esc(t.short_name)}</strong></td><td>${esc(t.sector)}</td>`+
+       `<td><span class="tag ${CLS[t.classification]}">${esc(t.classification)}</span></td><td>${esc(t.ring)}</td>`+
+       `<td class="num">${t.state_of_art.trl}${t.evidence_status==="provisional"?' <span class="tag prov">provisional</span>':""}</td><td>${esc(t.rd_frontier.application)}</td></tr>`;});
+  $("#table").innerHTML=h+"</tbody>";
+  $("#table").querySelectorAll("tr[data-id]").forEach(r=>r.onclick=()=>{state.sel=r.dataset.id;drawRadar();drawDetail();drawTable();$("#detail").scrollIntoView({behavior:"smooth",block:"nearest"});});
+}
+
+/* timeline */
+function drawTimeline(){
+  const ev=DATA.watchlist.map(w=>({...w,d:toDate(w.date)})).sort((a,b)=>a.d-b.d);
+  const start=new Date(2026,9,1),end=new Date(2028,0,1),W=1000,x0=30,x1=970;
+  const X=d=>x0+(x1-x0)*(d-start)/(end-start);
+  let h=`<line x1="${x0}" y1="60" x2="${x1}" y2="60" stroke="${css("--line")}" stroke-width="2"/>`;
+  for(let mth=0;mth<=15;mth++){const d=new Date(2026,9+mth,1),x=X(d);
+    h+=`<line x1="${x}" y1="55" x2="${x}" y2="65" stroke="${css("--line")}"/>`;
+    if(mth%3===0)h+=`<text x="${x}" y="84" font-size="12" fill="${css("--ink-3")}" text-anchor="middle">${MONTHS[d.getMonth()]} ${d.getFullYear()}</text>`;}
+  const tx=X(today);
+  if(tx>=x0&&tx<=x1)h+=`<line x1="${tx}" y1="28" x2="${tx}" y2="92" stroke="${css("--transf")}" stroke-width="2" stroke-dasharray="4 3"/><text x="${tx}" y="22" font-size="11.5" font-weight="700" fill="${css("--transf")}" text-anchor="middle">TODAY</text>`;
+  ev.forEach((e,i)=>{if(e.precision==="year")return;const x=X(e.d);h+=`<circle cx="${x}" cy="60" r="7" fill="${e.d<today?css("--ink-3"):css("--brand")}" stroke="${css("--surface")}" stroke-width="2"/><text x="${x}" y="${i%2?110:44}" font-size="11.5" font-weight="700" fill="${css("--ink-2")}" text-anchor="middle">${esc(e.trend)}</text>`;});
+  $("#tl").innerHTML=h;
+  $("#events").innerHTML=ev.map(e=>`<div class="ev${e.d<today?" past":""}"><div class="d">${esc(fmtDate(e.date,e.precision))} · ${esc(e.trend)}</div><div class="e">${esc(e.event)}</div></div>`).join("");
+}
+
+/* proposal */
+function drawProposal(){
+  const p=DATA.recommended_rd,f=p.funding.primary;
+  const rel=p.novelty.related_work.map(r=>`<tr><td><a href="${esc(r.url)}" target="_blank" rel="noopener"><strong>${esc(r.name)}</strong></a></td><td>${esc(r.what)}</td><td>${esc(r.difference)}</td></tr>`).join("");
+  $("#proposal").innerHTML=
+   `<div class="kick">Recommended R&amp;D project · builds on ${p.builds_on.join(", ")}</div>`+
+   `<h2>${esc(p.name)}</h2><p class="sub">${esc(p.full_title)}</p>`+
+   `<div class="flow" aria-label="Concept"><span class="n">Inverter load history</span><span class="a">+</span><span class="n">Damage model with uncertainty</span><span class="a">+</span><span class="n">LCA / cost</span><span class="a">→</span><span class="dec"><span>Repair</span><span>Remanufacture</span><span>Reuse</span><span>Recycle</span></span></div>`+
+   `<div class="two"><div><div class="sec"><h3>Problem</h3><p>${esc(p.problem)}</p></div>`+
+   `<div class="rq"><strong>Research question.</strong> ${esc(p.research_question)}</div>`+
+   `<div class="sec"><h3>Scope</h3><p>${esc(p.pilot_scope)}</p></div>`+
+   `<div class="sec"><h3>BLUE's role</h3><p>${esc(p.blue_role)}</p></div></div>`+
+   `<div><div class="sec"><h3>Work plan</h3><ol class="wp">${p.work_plan.map(w=>`<li>${esc(w)}</li>`).join("")}</ol></div>`+
+   `<div class="sec"><h3>Success measures</h3><ul class="km">${p.metrics.map(w=>`<li>${esc(w)}</li>`).join("")}</ul></div>`+
+   `<div class="sec"><h3>Funding route</h3><p><strong>${esc(f.topic_id)}</strong> · ${esc(f.title)}<br>${esc(f.fit)} Planned opening ${esc(fmtDate(f.expected_open))}, deadline ${esc(fmtDate(f.deadline))}. ${esc(f.indicative_eu_contribution)}<br><em>${esc(f.verify)}</em><br>Fallback: ${esc(p.funding.fallback)}</p></div></div></div>`+
+   `<div class="sec" style="margin-top:16px"><h3>Novelty check: how this differs from running EU projects</h3><p style="margin-bottom:8px">${esc(p.novelty.claim)}</p>`+
+   `<div class="scroll"><table class="tbl"><thead><tr><th>Related work</th><th>What it does</th><th>Gap CircuTwin addresses</th></tr></thead><tbody>${rel}</tbody></table></div></div>`+
+   `<p style="font-size:13px;color:var(--ink-3);margin:10px 0 0">${esc(p.status)}</p>`;
+}
+
+/* drivers + method */
+function drawDrivers(){
+  $("#drivers").innerHTML=DATA.drivers.map(d=>`<div class="card drv"><h3>${esc(d.name)}</h3><p>${esc(d.facts)}</p><p style="margin-top:6px;font-size:12.5px;color:var(--ink-3)">Affects ${d.affects.join(", ")}</p></div>`).join("");
+  const dl=o=>`<dl>${Object.entries(o).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`;
+  $("#method").innerHTML=
+   `<div class="card"><h3>Two maturity values</h3><p style="margin:0;color:var(--ink-2)">${esc(m.trl_policy)}</p><p style="margin:8px 0 0"><a href="${esc(m.trl_scale.url)}" target="_blank" rel="noopener">EU TRL definitions</a></p></div>`+
+   `<div class="card"><h3>Classification for BLUE</h3>${dl(m.classification_policy)}</div>`+
+   `<div class="card"><h3>Rings = recommended action</h3>${dl(m.ring_policy)}</div>`;
+  $("#foot").innerHTML=`Data version ${esc(m.version)} · researched ${esc(fmtDate(m.research_date))} · ${esc(m.author)}. Source data: <code>data/trends.json</code>; rebuild with <code>python tools/radar.py all</code>. ${esc(m.ai_use)}`;
+}
+
+chipRow();legend();drawRadar();drawDetail();drawTable();drawTimeline();drawProposal();drawDrivers();
+if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{legend();drawRadar();drawTimeline();});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+candidate,decision,absorbed_by,screening_rationale
+MCS-ready high-voltage powertrains,Selected,T01,EU zero-emission HDV transition; near-term MCS interoperability evidence
+Battery health / remaining-life analytics,Selected,T02,Cross-OEM lifecycle value and mature operational product category
+Vehicle and fleet digital twins,Selected,T03,Direct BLUE modelling fit; link across design and asset lifecycle
+Virtual validation / homologation,Selected,T04,Direct BLUE validation services; distinct evidence-credibility opportunity
+L4 automated urban shuttles,Selected,T05,B4IA continuation plus Turin pilots and safety V&V frontier
+Digital passports and circularity,Selected,T06,Circularity breadth; explicit EU regulation/funding trigger
+AI surrogate modelling for CAE,Selected,T07,Potentially disruptive to BLUE simulation services
+Hydrogen fuel-cell/battery buses,Selected,T08,Mature contrasting pathway; existing B4IA capabilities
+Generic predictive maintenance,Merged,T02 / T03,Overlaps focused battery health and operational digital twins
+Edge AI vehicle diagnostics,Merged,T02,"Enabling method, narrower than standalone sector-level trend"
+AI sensor fusion,Merged,T05,Subsystem enabler within urban automated driving
+Battery recycling and second life,Merged,T06,Lifecycle-outcome subtopic in passport-enabled circularity
+Advanced battery thermal management,Merged,T01 / T02,Design and battery reliability enabler covered in powertrain themes
+Next-generation solid-state batteries,Deferred,,Battery chemistry broad and weaker near-term direct BLUE service route
+Wireless / opportunity charging,Deferred,,Existing BLUE trolleybus relevance; lower gap diversity than MCS
+Vehicle-to-grid for fleets,Deferred,,Grid-market dependence; less direct link to BLUE engineering services
+Vehicle-to-everything communication,Deferred,,System-wide opportunity but broad; validation gap partly in T05
+Lightweight recyclable composites,Reserve,,Genuine BLUE design skill; replace weaker topic if needed
+Shape-memory smart structures,Reserve,,BLUE ARIA heritage; narrower industry-scale 2031–36 driver
+Software-defined vehicles / OTA security,Reserve,,"Important technology; overlaps virtual V&V and digital twins, more integration effort"

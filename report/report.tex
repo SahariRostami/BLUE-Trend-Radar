@@ -1,0 +1,49 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+% Content-only packages: the required class, size, margins and spacing are unchanged.
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[hidelinks]{hyperref}
+\title{A Decision-Oriented Trend Radar for Sustainable Commercial Mobility}
+\author{Sahar Rostami}
+\date{20 October 2026}
+\begin{document}
+\maketitle
+
+\section{Sector choice and scope}
+\textbf{Automotive --- zero-emission commercial vehicles (2031--2036).}
+BLUE's 2026 R\&D partnering profile specifically targets electric powertrains, battery durability, digital twins and data-driven circularity~\cite{blue}. Its B4IA hydrogen-hybrid minibus project is scheduled to finish in December 2026. European demand has clear timing: manufacturers must reach 90\% zero-emission shares in new urban-bus fleets by 2030 and 100\% by 2035, while covered batteries require passports from February 2027~\cite{reg}. Rail is a credible alternative, but road transport combines these BLUE capabilities with a near-term funding route.
+
+\section{Method and eight selected signals}
+Twenty candidates were screened for BLUE fit, future relevance, R\&D potential and source quality. \textbf{Industry TRL} rates a \emph{specific, publicly evidenced application} on the European 1--9 scale~\cite{reg}; an asterisk flags provisional evidence. The \textbf{R\&D opportunity} is a distinct, unresolved next step; any starting maturity is a planning assumption, not a measured TRL. \emph{Core} extends BLUE services, \emph{adjacent} transfers them, and \emph{transformative} may reshape how BLUE earns revenue. Radar rings recommend action: \emph{Engage now}, \emph{Build capability}, or \emph{Monitor}. Maturity is not priority: passports offer an imminent call while AI surrogates threaten BLUE's simulation-service economics.
+
+\begin{table}[h!]
+\centering
+\input{radar_table}% generated from data/trends.json by tools/radar.py
+\caption{TRL at industry state of the art (* provisional). Each entry's sources and limitations are in \texttt{data/trends.json}.}
+\end{table}
+
+\clearpage
+\noindent\textbf{What the radar says.} Six of eight technologies are already at TRL 7--9 in industry; BLUE's R\&D value lies in the unsolved layer above them: credible models, quantified uncertainty and lifecycle data.
+
+\section{Recommended R\&D project: CircuTwin-HD}
+\textbf{Uncertainty-aware lifecycle decisions for electric-bus traction inverters.}
+A used inverter can be repaired, remanufactured, reused or recycled; simple rules on age, mileage and fault codes, used here as the baseline, cannot see the stress history that drives power-device wear. \textbf{Research question:} can a lifecycle twin combining measured load histories, a calibrated physics-of-failure model, explicitly quantified remaining-life uncertainty, and LCA/LCC support better decisions than a transparent rule-based baseline?
+
+\textbf{Novelty test.} RUST2LIFE, CREDIT and RESURRECTION already connect twins, passports and remanufacturing~\cite{related}, but their public descriptions do not specify this inverter, load-history and uncertainty-aware decision test; power-cycling research supplies a damage-model building block~\cite{phm}. The gap is \emph{testable}, not a claimed world first.
+
+\textbf{Pilot:} (1) define traceable component identities and secure data access; (2) log authorised electrical and thermal loads on an operating e-bus fleet; (3) calibrate remaining-life estimates on power-cycling tests; (4) compare repair/reuse/remanufacture/recycling with LCA and cost; (5) assess recommendations blindly against expert decisions and returned-component inspections. Measure prediction error and calibration, decision agreement, traceability and CO$_2$e/material differences. BLUE could lead multiphysics simulation, digital-twin architecture and validation, with an OEM, operator, university and remanufacturer.
+
+\textbf{Funding fit.} \href{https://cordis.europa.eu/programme/id/HORIZON_HORIZON-CL5-2027-03-D5-03}{HORIZON-CL5-2027-03-D5-03}, Area B, calls for component track-and-trace, measured operating loads, API-based data exchange and digital-twin passports with LCA~\cite{call}. The Work Programme lists a lump-sum \textbf{Innovation Action}: EUR~24m total, EUR~5--7m \emph{per consortium project}, open 15 December 2026 to 14 April 2027~\cite{call}. It is a consortium bid, not a BLUE grant; novelty, data rights and eligibility must be checked. Fallback: Italy's \emph{Accordi per l'innovazione}, which funds B4IA.
+
+\section{Keeping the radar alive}
+An R\&D owner runs quarterly reviews plus checks triggered by project ends, the Horizon call and passport milestones. One JSON file generates the dashboard, CSV and report table. A GitHub workflow checks source/data consistency monthly and opens a review issue for unacknowledged milestones. Reclassify a trend only with a dated source, justification and confidence; Git history keeps the audit trail. A trend without new evidence for two reviews moves to Monitor or is retired.
+
+\begin{thebibliography}{9}
+\bibitem{blue} BLUE Engineering, \href{https://www.b2match.com/e/nextchain-2025/opportunities/UGFydGljaXBhdGlvbk9wcG9ydHVuaXR5OjI1NDA1OA==}{Cluster 5 partnering profile}, Jul 2026.
+\bibitem{reg} EU Regulations \href{https://eur-lex.europa.eu/eli/reg/2024/1610/oj/eng}{2024/1610} and \href{https://eur-lex.europa.eu/eli/reg/2023/1542/oj}{2023/1542} (Art.~77); European Innovation Council, \href{https://eic.ec.europa.eu/programme-finder-13_en}{TRL definitions}.
+\bibitem{related} CORDIS: \href{https://cordis.europa.eu/project/id/101295335}{RUST2LIFE}, \href{https://cordis.europa.eu/project/id/101138182}{CREDIT}, \href{https://cordis.europa.eu/project/id/101294921}{RESURRECTION}.
+\bibitem{phm} Kim, Lee, Han, \href{https://papers.phmsociety.org/index.php/phme/article/view/4920}{IGBT physics-of-failure damage metric}, PHME 2026.
+\bibitem{call} European Commission: \href{https://cordis.europa.eu/programme/id/HORIZON_HORIZON-CL5-2027-03-D5-03}{CORDIS D5-03 scope} (Area B); \href{https://eur-lex.europa.eu/resource.html?format=PDF\&uri=cellar%3A238f3caf-d75f-11f0-8da2-01aa75ed71a1.0001.02%2FDOC_9}{Work Programme 2026--2027}, Cluster 5.
+\end{thebibliography}
+\end{document}

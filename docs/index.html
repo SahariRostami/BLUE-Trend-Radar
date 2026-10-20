@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLUE Trend Radar</title>
+<meta name="description" content="Technology trend radar for BLUE Engineering: smart, sustainable and circular commercial mobility, horizon 2031-2036.">
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --surface-2:#eef1f5; --ink:#14202e; --ink-2:#4a5767; --ink-3:#7a8696;
+  --line:#d9dee5; --brand:#0b3d91; --brand-soft:#e3ebf8;
+  --engage:#0b3d91; --build:#3f7cc4; --monitor:#9db6d6;
+  --core:#0b3d91; --adjacent:#0f8a7e; --transf:#c2410c;
+  --warn:#9a6700; --ok:#18794e;
+  --ring1:#e8eef8; --ring2:#f1f5fb; --ring3:#f8fafd;
+  --shadow:0 1px 2px rgba(20,32,46,.06),0 4px 16px rgba(20,32,46,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e141c; --surface:#151d28; --surface-2:#1c2633; --ink:#e7edf5; --ink-2:#b2bdcb; --ink-3:#7f8b9b;
+    --line:#2a3646; --brand:#7fb0ff; --brand-soft:#1b2a40;
+    --engage:#7fb0ff; --build:#4f86c9; --monitor:#33506f;
+    --core:#7fb0ff; --adjacent:#3cc4b3; --transf:#f08a4b;
+    --warn:#e3b341; --ok:#4ac68a;
+    --ring1:#1a2738; --ring2:#17212f; --ring3:#141c27;
+    --shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+a{color:var(--brand)}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 16px 48px}
+header .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+header h1{font-size:30px;line-height:1.15;margin:6px 0 6px;letter-spacing:-.01em}
+header p.lede{margin:0;color:var(--ink-2);max-width:760px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .v{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.kpi .l{font-size:13px;color:var(--ink-2)}
+.kpi.next .v{font-size:17px;line-height:1.3}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+.radar-card{padding:16px}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.toolbar .lab{font-size:12px;color:var(--ink-3);margin-right:4px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:4px 11px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+@media (prefers-color-scheme: dark){.chip[aria-pressed="true"]{color:#0e141c}}
+svg.radar{width:100%;height:auto;display:block}
+.blip{cursor:pointer;outline:none}
+.blip .halo{opacity:0;transition:opacity .15s}
+.blip:hover .halo,.blip:focus .halo,.blip.sel .halo{opacity:1}
+.blip.dim{opacity:.18}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink-2);margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.detail{padding:20px 22px;position:sticky;top:12px}
+.detail h2{margin:2px 0 6px;font-size:22px;line-height:1.2}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.tag{font-size:12px;border-radius:6px;padding:2px 8px;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.tag.core{color:var(--core)} .tag.adjacent{color:var(--adjacent)} .tag.transformative{color:var(--transf)}
+.tag.prov{color:var(--warn);border-color:var(--warn)} .tag.sup{color:var(--ok)}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.meter{background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.meter .t{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.meter .val{font-size:20px;font-weight:700;margin:2px 0 6px}
+.cells{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+.cells i{height:8px;border-radius:2px;background:var(--line)}
+.cells i.on{background:var(--brand)}
+.cells i.assume{background:transparent;border:1.5px dashed var(--ink-3)}
+.meter .s{font-size:12.5px;color:var(--ink-2);margin-top:6px}
+.sec{margin-top:12px}
+.sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin:0 0 3px}
+.sec p{margin:0;color:var(--ink)}
+.dbx{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.src{list-style:none;padding:0;margin:4px 0 0}
+.src li{font-size:13.5px;padding:5px 0;border-top:1px solid var(--line);display:flex;gap:8px;align-items:baseline}
+.src .ty{font-size:11px;color:var(--ink-3);white-space:nowrap;min-width:92px}
+.src .no{font-size:11px;color:var(--warn)}
+section.block{margin-top:22px}
+section.block>h2{font-size:20px;margin:0 0 10px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr{cursor:pointer}
+.tbl tr:hover td{background:var(--surface-2)}
+.tbl .num{font-variant-numeric:tabular-nums;font-weight:600}
+.scroll{overflow-x:auto}
+.timeline{padding:18px 18px 8px}
+.tl-svg{width:100%;height:auto;display:block}
+.events{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
+.ev{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface-2)}
+.ev .d{font-weight:700;font-size:13px}
+.ev .e{font-size:13.5px;color:var(--ink-2)}
+.ev.past{opacity:.55}
+.proposal{padding:22px}
+.proposal .kick{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.proposal h2{margin:4px 0 2px;font-size:24px}
+.proposal .sub{color:var(--ink-2);margin:0 0 14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.rq{border-left:3px solid var(--brand);background:var(--brand-soft);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
+ol.wp,ul.km{margin:4px 0 0;padding-left:20px}
+ol.wp li,ul.km li{margin:3px 0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0}
+.flow .n{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px}
+.flow .a{color:var(--ink-3)}
+.flow .dec{display:flex;gap:4px}
+.flow .dec span{background:var(--brand);color:#fff;border-radius:6px;padding:4px 8px;font-size:12px}
+@media (prefers-color-scheme: dark){.flow .dec span{color:#0e141c}}
+.drivers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.drv{padding:14px 16px}
+.drv h3{font-size:15px;margin:0 0 6px}
+.drv p{margin:0;font-size:14px;color:var(--ink-2)}
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.method .card{padding:14px 16px;font-size:14px}
+.method h3{font-size:15px;margin:0 0 6px}
+.method dl{margin:0} .method dt{font-weight:600} .method dd{margin:0 0 6px;color:var(--ink-2)}
+footer{margin-top:28px;font-size:13px;color:var(--ink-3)}
+.sr{position:absolute;left:-9999px}
+@media (max-width:900px){
+  .grid,.two,.drivers,.method{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .detail{position:static}
+  header h1{font-size:24px}
+}
+@media (max-width:520px){.meters,.dbx{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">BLUE Engineering · R&amp;D Trend Radar · Automotive</div>
+    <h1>Smart, sustainable &amp; circular commercial mobility</h1>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid">
+    <div class="card radar-card">
+      <div class="toolbar" id="filters" aria-label="Filters"></div>
+      <svg class="radar" id="radar" viewBox="0 0 640 640" role="img" aria-label="Trend radar"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside class="card detail" id="detail" aria-live="polite"></aside>
+  </div>
+
+  <section class="block">
+    <h2>All trends</h2>
+    <div class="card scroll"><table class="tbl" id="table"></table></div>
+  </section>
+
+  <section class="block">
+    <h2>Watchlist: dates that trigger a review</h2>
+    <div class="card timeline"><svg class="tl-svg" id="tl" viewBox="0 0 1000 120" role="img" aria-label="Watchlist timeline"></svg><div class="events" id="events"></div></div>
+  </section>
+
+  <section class="block">
+    <div class="card proposal" id="proposal"></div>
+  </section>
+
+  <section class="block">
+    <h2>Why these trends matter by 2031–2036</h2>
+    <div class="drivers" id="drivers"></div>
+  </section>
+
+  <section class="block">
+    <h2>Method</h2>
+    <div class="method" id="method"></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = {"meta": {"title": "BLUE Engineering Trend Radar - Automotive (commercial vehicles)", "version": "6.1", "sector": "Automotive", "focus": "Smart, sustainable and circular zero-emission commercial mobility (buses, coaches, vans, trucks)", "research_date": "2026-10-20", "horizon": "2031-2036", "author": "Sahar Rostami", "trl_scale": {"title": "European Commission TRL definitions (EIC)", "url": "https://eic.ec.europa.eu/programme-finder-13_en"}, "trl_policy": "Each trend carries two maturity values. 'state_of_art.trl' is the EU TRL of the best publicly evidenced application today, justified by a demonstration or deployment. 'rd_frontier.starting_maturity' is the proposed starting maturity of the specific next step where BLUE could do R&D: a planning assumption to be validated, not a demonstrated TRL. 'evidence_status' marks whether the state-of-art TRL is 'supported' (a concrete demonstration or deployment is cited) or 'provisional' (only project plans, frameworks or partial evidence). TRL measures technical maturity only; regulatory acceptance and market adoption are recorded separately. Project goals are never treated as achieved results.", "classification_policy": {"Core": "Extends services BLUE already sells or projects it already runs.", "Adjacent": "Applies existing BLUE skills to a new application, customer or service.", "Transformative": "Could change how BLUE delivers value or earns revenue, including threats to current services."}, "ring_policy": {"Engage now": "Concrete funding or customer demand within ~24 months; BLUE should act on it in the next proposal cycle.", "Build capability": "Demand expected in 2-5 years; invest in skills, tools and partnerships.", "Monitor": "Relevant but uncertain or outside BLUE's near-term role; track signals only."}, "source_type_policy": {"regulation": "EU or UNECE legal text or official legislative summary", "eu_official": "European Commission, CORDIS, EU agency or partnership page", "project_report": "Project results or reporting (self-reported by consortium)", "company_press": "Company press release (self-reported, not independently verified)", "vendor": "Tool vendor or service provider content (commercial interest)", "public_authority": "City, region, university or public operator", "academic": "Peer-reviewed or institute publication", "news": "Trade or general press"}, "schema_note": "Sources carry 'checked_at' (date the link was opened) and 'access_status' ('opened' = content read and claim matched; 'not_opened' = cited but not re-read in this review). Dates in watch lists carry 'precision' ('day', 'month').", "ai_use": "AI tools supported research and drafting. Claims are attributed to dated public sources; some maturity values remain analyst estimates and are marked provisional."}, "blue_context": {"summary": "BLUE's Head of R&D publicly lists electric and high-voltage powertrain integration, digital twins, AI-assisted predictive maintenance, design for disassembly/repair/reuse/recycling, lifecycle assessment and virtual validation as core capabilities, and names data-driven decisions on component reuse, remanufacturing and second life as a target area.", "existing_projects": [{"name": "B4IA - hydrogen hybrid minibus with Level 3 automation and predictive maintenance", "duration": "2024-06-03 to 2026-12-02", "funding": "Fondo per la Crescita Sostenibile - Accordi per l'innovazione (Italian national)", "partners": "Four Piedmontese companies and Politecnico di Torino", "url": "https://blue-group.it/b4ia-bus-innovativo-ibrido-idrogeno-integrato-e-autonomo-fondo-per-la-crescita-sostenibile-accordi-per-linnovazione-d-m-31-dicembre-2021-e-d-d-18-marzo-2022/"}], "sources": [{"title": "BLUE Horizon Europe Cluster 5 partnership profile (Marco Eid, Head of R&D; updated 23 Jul 2026)", "url": "https://www.b2match.com/e/nextchain-2025/opportunities/UGFydGljaXBhdGlvbk9wcG9ydHVuaXR5OjI1NDA1OA==", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "BLUE engineering services profile (15 Apr 2026)", "url": "https://www.b2match.com/e/speedmatch-2026/opportunities/UGFydGljaXBhdGlvbk9wcG9ydHVuaXR5OjIzMjU0OA==", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}]}, "drivers": [{"id": "D1", "name": "EU CO2 standards for heavy-duty vehicles - Regulation (EU) 2024/1610", "facts": "Trucks and coaches: -45% from 2030, -65% from 2035, -90% from 2040 vs 2019. New urban buses: 90% zero-emission by 2030, 100% by 2035. Hydrogen vehicles count as zero-emission.", "affects": ["T01", "T02", "T06", "T08"], "sources": [{"title": "European Parliament OEIL summary of Regulation 2024/1610", "url": "https://oeil.europarl.europa.eu/oeil/en/document-summary?id=1785406", "type": "regulation", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "EPRS briefing (Italian)", "url": "https://www.europarl.europa.eu/RegData/etudes/ATAG/2024/760401/EPRS_ATA(2024)760401_IT.pdf", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}]}, {"id": "D2", "name": "EU Batteries Regulation 2023/1542, Article 77 - battery passport", "facts": "Mandatory from 18 Feb 2027 for every EV battery, LMT battery and industrial battery >2 kWh placed on the EU market. Due-diligence obligations postponed to 18 Aug 2027.", "affects": ["T02", "T06"], "sources": [{"title": "Battery-Tech Network: battery passport deadline analysis", "url": "https://battery-tech.net/why-the-eu-is-about-to-miss-its-own-battery-passport-deadline-while-industrys-stays-fixed/", "type": "news", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "Regulation (EU) 2023/1542 (Italian text on EUR-Lex)", "url": "https://eur-lex.europa.eu/legal-content/IT/TXT/?qid=1708012653977&uri=CELEX%3A32023R1542", "type": "regulation", "checked_at": null, "access_status": "not_opened"}]}, {"id": "D3", "name": "UNECE virtual testing in type approval", "facts": "UN R157 (ALKS) first formalised virtual validation. UN R171 (DCAS, in force 22 Sep 2024) allows virtual testing with a mandatory credibility assessment (Annex 5). A virtual-testing amendment to UN R152 (AEBS) is reported but its adopted text is not yet confirmed here.", "affects": ["T04", "T05", "T07"], "sources": [{"title": "UN Regulation No 171 (DCAS) - EU OJ 2024/2689", "url": "https://eur-lex.europa.eu/eli/reg/2024/2689/oj", "type": "regulation", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "dSPACE: digital vs virtual homologation", "url": "https://www.dspace.com/en/ltd/home/applicationfields/stories/digital-homologation.cfm", "type": "vendor", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "TUV SUD: virtual homologation of an ALKS under UNECE R157", "url": "https://www.tuvsud.com/en/knowledge-hub/white-papers/virtual-homologation-of-an-alks-according-to-unece-r157", "type": "vendor", "checked_at": "2026-10-20", "access_status": "opened"}], "todo": "Confirm the adopted UN R152 amendment text on UNECE WP.29 documents."}], "trends": [{"id": "T01", "name": "MCS-ready high-voltage powertrains for heavy-duty EVs", "theme": "Electrification", "classification": "Core", "classification_why": "BLUE lists electric and high-voltage powertrain integration and thermal/multiphysics simulation as core capabilities.", "ring": "Engage now", "description": "Battery-electric trucks and coaches with megawatt charging (MCS), requiring integrated design of HV architecture, battery thermal management and charging interface.", "state_of_art": {"application": "Series heavy trucks charging via MCS at up to 1 MW", "trl": 8, "evidence": "Sept 2026: live interoperable MCS charging demo with Daimler Truck, MAN and Scania on a 1,000 kW charger; MAN states it has fitted MCS as standard for early-adopter customers since July 2026. Not yet TRL 9 at fleet scale: Milence plans 70 hubs by end-2027, with just over half MCS-capable."}, "rd_frontier": {"application": "Higher-voltage, MCS-compatible modular powertrains for HDVs", "why": "A live MCS demonstration does not establish performance and interoperability of future higher-voltage modular vehicle architectures; starting maturity is a proposal assumption, not inferred from a call existing.", "starting_maturity": 5, "status": "proposed starting maturity - to be validated"}, "confidence": "medium-high", "sources": [{"title": "Milence: Megawatt Charging impresses at IAA Transportation 2026 (14 Sep 2026)", "url": "https://milence.com/newsroom/megawatt-charging-impresses-at-iaa-transportation-2026/", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "HORIZON-CL5-2027-03-D5-05 topic (listed in call synthesis)", "url": "https://www.welcomeurope.com/en/the-list-of-our-calls-projects/horizon-europe-mobility-2027/", "type": "news", "checked_at": "2026-10-20", "access_status": "opened"}], "watch": [{"date": "2027-04-14", "event": "Deadline of call HORIZON-CL5-2027-03 (incl. D5-05)", "precision": "day"}], "last_reviewed": "2026-10-20", "evidence_status": "supported", "expected_evolution_2031_2036": "MCS moves from early-adopter option to the default long-haul charging interface; R&D shifts to higher-voltage, modular powertrains sized per mission.", "driver": "HDV CO2 targets of -45% (2030) and -65% (2035) force battery-electric long-haul.", "barrier": "Grid connection capacity and corridor charger roll-out lag vehicle availability.", "signpost": "MCS share of public HDV chargers; award of the 2027 D5-05 projects.", "ring_why": "A dedicated 2027 call (D5-05) and series offers from MAN create demand for HV integration and thermal engineering now.", "short_name": "MCS heavy-duty powertrains", "sector": "Electrification", "report_label": "MCS heavy-duty powertrains", "report_evidence": "1\\,MW demo, 3 OEMs; MAN offers MCS"}, {"id": "T02", "name": "Battery state-of-health and remaining-life analytics", "theme": "Electrification + AI", "classification": "Adjacent", "classification_why": "Extends BLUE's AI-based predictive maintenance and powertrain work into battery lifetime, warranty and second-life services.", "ring": "Engage now", "description": "Estimating battery degradation, state of health (SOH) and remaining useful life from field data with physics-based and machine-learning models.", "state_of_art": {"application": "Commercial SOH analytics for e-bus fleets", "trl": 8, "evidence": "Since November 2020, TWAICE battery-health analytics have been offered as an add-on to roughly 3,000 e-buses connected to the ViriCiti platform (eligible fleet; active subscriptions not disclosed). Fleet-learning SOH models validated on 25 e-buses (Fraunhofer IVI, 2023)."}, "rd_frontier": {"application": "Operator-independent, multi-OEM SOH/RUL with quantified uncertainty, feeding battery-passport dynamic data", "why": "InnoBMS validated an early SOC/SOH algorithm on real cell data (<3% SOC error) with vehicle demos still in preparation; SOH FLEET (TMB Barcelona, Keolis, 2025) addressed operators' lack of transparent SOH access.", "starting_maturity": 4, "status": "proposed starting maturity - to be validated"}, "confidence": "medium", "sources": [{"title": "TWAICE x ViriCiti e-bus battery analytics partnership (5 Nov 2020)", "url": "https://www.twaice.com/newsroom/viriciti-partnership", "type": "vendor", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "Fraunhofer IVI: fleet SOH with tailored neural network (2023)", "url": "https://publica.fraunhofer.de/handle/publica/442699", "type": "academic", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "InnoBMS CORDIS periodic report 1 (2024-01 to 2025-06)", "url": "https://cordis.europa.eu/project/id/101137975/reporting", "type": "project_report", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "EIT Urban Mobility SOH FLEET (2025)", "url": "https://www.eiturbanmobility.eu/projects/soh-fleet/", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}], "watch": [{"date": "2027-06-30", "event": "InnoBMS ends - check final vehicle demo results (Fiat Doblo 400V, IVECO eDaily 800V)", "precision": "day"}], "last_reviewed": "2026-10-20", "evidence_status": "supported", "expected_evolution_2031_2036": "SOH analytics become an expected fleet service and feed battery-passport dynamic data; value moves to OEM-independent, uncertainty-quantified remaining-life estimates for warranty and second-life.", "driver": "Battery passport (Feb 2027) and 8-year battery warranties in 15-year bus lives.", "barrier": "Operators often lack access to raw battery data from the OEM BMS.", "signpost": "Battery-passport dynamic-data rules; InnoBMS vehicle demo results (mid-2027).", "ring_why": "Shares methods and data with the recommended CircuTwin project, so capability built here is reused immediately.", "short_name": "Battery health analytics", "sector": "Electrification", "report_label": "Battery health analytics", "report_evidence": "Commercial e-bus SOH service since 2020"}, {"id": "T03", "name": "Vehicle-specific and fleet digital twins", "theme": "Digital twins", "classification": "Core", "classification_why": "Digital twins and data-driven engineering are listed BLUE capabilities.", "ring": "Build capability", "description": "Models that stay linked to each vehicle's hardware/software configuration and operating data, used for energy, health and lifecycle decisions. Enabling layer for T02, T04 and T06.", "state_of_art": {"application": "Subsystem digital twins of an electric minibus validated against vehicle tests", "trl": 5, "evidence": "MINDED (Horizon IA, 2024-2027) reports a validated digital twin of the cabin, HVAC, battery and powertrain of an electric minibus, calibrated with two tests on a climate-controlled chassis dynamometer and used for predictive control (reporting period Jan 2024-Jun 2025). This supports TRL 5 (validated in a relevant environment) for single-vehicle subsystem twins. TWIN-LOOP (2025-2027) targets vehicle-specific twins for software-defined EVs but has no validated results yet. Fleet-level, cross-OEM twins remain the frontier."}, "rd_frontier": {"application": "Twins for mixed commercial fleets across OEMs", "why": "No public evidence of cross-OEM operational twins for buses/trucks.", "starting_maturity": 4, "status": "proposed starting maturity - to be validated"}, "confidence": "medium", "sources": [{"title": "MINDED periodic report 1 on CORDIS (electric minibus thermal and energy management)", "url": "https://cordis.europa.eu/project/id/101138202/reporting", "type": "project_report", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "TWIN-LOOP on CORDIS", "url": "https://cordis.europa.eu/project/id/101192649", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}], "watch": [{"date": "2027-12-31", "event": "TWIN-LOOP ends - check validated use-case results", "precision": "day"}, {"date": "2027-06-30", "precision": "day", "event": "MINDED ends - check final demonstrator results"}], "last_reviewed": "2026-10-20", "evidence_status": "supported", "expected_evolution_2031_2036": "Vehicle-specific twins linked to operating data across the lifecycle become the backbone for energy, health and lifecycle services.", "driver": "Software-defined vehicles make per-vehicle configuration and data available.", "barrier": "No common data model across OEMs; data ownership and cost of keeping twins current.", "signpost": "TWIN-LOOP validated use cases (end 2027); Catena-X twin standards.", "ring_why": "Subsystem twins are validated, but fleet-level, cross-OEM twins still need data standards and partners; build the skill through T02/T06 projects rather than a stand-alone bid.", "short_name": "Vehicle & fleet digital twins", "sector": "Digital twins & validation", "report_label": "Vehicle/fleet twins", "report_evidence": "Minibus subsystem twin validated (MINDED)"}, {"id": "T04", "name": "Simulation-credible virtual validation and homologation", "theme": "Digital twins + Validation", "classification": "Core", "classification_why": "BLUE sells virtual validation and vehicle development up to homologation, and runs a V&V centre in Naples.", "ring": "Build capability", "description": "Using credibility-assessed simulation (SIL/HIL, scenario-based testing) as accepted evidence in type approval, alongside physical tests.", "state_of_art": {"application": "Simulation toolchains with credibility assessment used as type-approval evidence for driver-assistance functions", "trl": 6, "evidence": "UN Regulation No 171 (DCAS), in force since 22 Sep 2024 and published as EU OJ 2024/2689, allows virtual testing in system validation provided a credibility assessment per its Annex 5 is supplied to the type-approval authority. A virtual-testing amendment to UN R152 (AEBS) is reported by vendors (proposal kept a physical-test floor of at least 30%) but its adopted text was not confirmed in this review. No public type approval that relied on virtual evidence was found, so TRL 6, not 7, until such an example is cited."}, "rd_frontier": {"application": "Credibility toolkits for bus/coach ADAS and automated shuttles", "why": "Published frameworks focus on passenger-car functions; commercial-vehicle and shuttle cases are less documented.", "starting_maturity": 4, "status": "proposed starting maturity - to be validated"}, "confidence": "medium", "sources": [{"title": "UN Regulation No 171 (DCAS) - EU Official Journal 2024/2689, para 8.2.1 and Annex 5", "url": "https://eur-lex.europa.eu/eli/reg/2024/2689/oj", "type": "regulation", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "dSPACE: digital homologation", "url": "https://www.dspace.com/en/ltd/home/applicationfields/stories/digital-homologation.cfm", "type": "vendor", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "TUV SUD: virtual homologation of ALKS (R157)", "url": "https://www.tuvsud.com/en/knowledge-hub/white-papers/virtual-homologation-of-an-alks-according-to-unece-r157", "type": "vendor", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "BLUE engineering services profile", "url": "https://www.b2match.com/e/speedmatch-2026/opportunities/UGFydGljaXBhdGlvbk9wcG9ydHVuaXR5OjIzMjU0OA==", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "Foretellix: proposed R152 AEBS virtual-testing amendment (pre-adoption description)", "url": "https://www.foretellix.com/?p=31420", "type": "vendor", "checked_at": "2026-10-20", "access_status": "opened"}], "last_reviewed": "2026-10-20", "evidence_status": "provisional", "open_check": "Find the adopted R152 amendment on UNECE WP.29 documents and one published type approval using virtual evidence.", "expected_evolution_2031_2036": "Credibility-assessed simulation becomes routine evidence for selected approval tests, always alongside physical tests.", "driver": "UN R171 already allows virtual testing with a mandatory credibility assessment; scenario counts grow faster than test-track capacity.", "barrier": "Approval authorities need validated models; acceptance varies by regulation and technical service.", "signpost": "Adopted R152 virtual-testing text; first public type approval citing virtual evidence.", "ring_why": "Direct extension of BLUE's V&V and homologation services, but regulatory uptake is gradual: build the credibility method before demand peaks.", "short_name": "Virtual homologation", "sector": "Digital twins & validation", "report_label": "Virtual homologation", "report_evidence": "UN R171 allows assessed virtual tests"}, {"id": "T05", "name": "Level-4 automated urban shuttles", "theme": "AI + Automation", "classification": "Adjacent", "classification_why": "B4IA targets Level 3; Level-4 defined-domain operation extends system scope and safety responsibility.", "ring": "Build capability", "description": "Automated electric shuttles in defined operational domains: some controlled-site deployments run without onboard safety drivers; road pilots require case-specific conditions.", "state_of_art": {"application": "Level-4 shuttles in defined domains: driverless with remote supervision on a closed site; with onboard operator on public roads", "trl": 7, "evidence": "Zurich Airport (9 Sep 2026): two shuttles with technology partner WeRide run fully automated on a defined route on airport premises without a safety driver onboard, monitored from a remote cockpit; employee shuttle, first weeks without passengers. On public roads, verified European pilots still keep an operator onboard: SHOW (2020-2024; 72 vehicles, 166,383 passengers, sites incl. Turin), Turin AuToMove (SAE L4 with safety driver, Oct 2025-Mar 2026), WeRide Leuven test permit (Sep 2025, safety officer onboard initially)."}, "rd_frontier": {"application": "Driverless, remotely supervised operation in mixed public urban traffic", "starting_maturity": 6, "status": "proposed starting maturity - to be validated", "why": "Driverless operation has been shown in controlled airport conditions; scaling reliable, remote-supervised operation to complex mixed urban traffic remains an application-specific challenge."}, "confidence": "high", "local_signal": "Piedmont and the City of Turin submitted a dossier in Brussels (Dec 2025) to make Turin an EU test city for autonomous driving - directly next to BLUE's Rivoli HQ.", "sources": [{"title": "Zurich Airport: automated shuttle buses now operate without a safety driver on board (9 Sep 2026)", "url": "https://newsroom.flughafen-zuerich.ch/en/zurich-airport-automated-shuttle-buses-now-operate-without-a-safety-driver-on-board/", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "SHOW final reporting on CORDIS", "url": "https://cordis.europa.eu/project/id/875530/reporting", "type": "project_report", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "Comune di Torino: AuToMove media kit", "url": "https://decentramento.comune.torino.it/circoscrizione7/media/366/download", "type": "public_authority", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "UniTo: AuToMove trial (ends 31 Mar 2026)", "url": "https://www.unito.it/avvisi/navetta-guida-autonoma-automove-i-tester-unito-partecipano-allestrazione-di-premi", "type": "public_authority", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "HDmotori: Torino candidacy as EU autonomous-driving lab", "url": "https://www.hdmotori.it/torino-test-guida-autonoma/", "type": "news", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "WeRide: Belgium's first Level 4 test permit (19 Sep 2025)", "url": "https://ir.weride.ai/news-releases/news-release-details/weride-robobus-receives-belgiums-first-level-4-permit-leading-av/", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}], "last_reviewed": "2026-10-20", "evidence_status": "supported", "expected_evolution_2031_2036": "Driverless, remotely supervised shuttles move from closed sites (airports) to selected public corridors.", "driver": "Operator cost and driver shortages in public transport; Turin positioning as an EU test city.", "barrier": "Low commercial speeds (SHOW average 10.6 km/h), liability and remote-supervision rules.", "signpost": "First EU public-road permit without onboard operator; outcome of Turin's EU testbed bid.", "ring_why": "BLUE has Level-3 experience (B4IA); a local testbed could appear, but business models are not yet proven.", "short_name": "Level-4 urban shuttles", "sector": "AI & automation", "report_label": "Level-4 shuttles", "report_evidence": "Driverless at Zurich Airport; operator on roads"}, {"id": "T06", "name": "Digital product passports and data-driven circularity", "theme": "Circularity", "classification": "Adjacent", "classification_why": "Combines BLUE's LCA, design-for-disassembly and digital-twin skills into a lifecycle engineering service.", "ring": "Engage now", "description": "Interoperable, access-controlled exchange of battery and component data to support repair, remanufacture, reuse and recycling decisions.", "state_of_art": {"application": "Battery passport data exchange across supply chains", "trl": 7, "evidence": "Battery passport legally mandatory from 18 Feb 2027. Catena-X (22 Jul 2026) reports cross-border Europe-China sovereign data exchange proven in a pilot, with operations due mid-Nov 2026."}, "rd_frontier": {"application": "Passports for non-battery EV components (inverters, motors, battery thermal systems) linked to measured operational loads and LCA to drive circular decisions", "why": "Listed as research and demonstration activities in Horizon topic HORIZON-CL5-2027-03-D5-03, Area B.", "starting_maturity": 3, "status": "proposed starting maturity - to be validated"}, "confidence": "medium", "sources": [{"title": "Catena-X: cross-border China-Europe data ecosystem (22 Jul 2026)", "url": "https://catena-x.net/news/catena-x-launches-worlds-first-cross-border-automotive-industry-data-ecosystem-between-china-and-europe/", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "CORDIS topic HORIZON-CL5-2027-03-D5-03", "url": "https://cordis.europa.eu/programme/id/HORIZON_HORIZON-CL5-2027-03-D5-03", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}], "watch": [{"date": "2026-11", "event": "Catena-X China operations due to start (mid-Nov 2026)", "precision": "month"}, {"date": "2027-02-18", "event": "Battery passport mandatory", "precision": "day"}], "last_reviewed": "2026-10-20", "evidence_status": "supported", "expected_evolution_2031_2036": "Passports extend from batteries to other high-value EV components and start driving repair, remanufacture and recycling decisions.", "driver": "Battery passport mandatory 18 Feb 2027; due diligence from 18 Aug 2027; Horizon 2027 call D5-03.", "barrier": "Component-level data access, cost of tracing, and unclear business case for reuse.", "signpost": "Catena-X operations start (mid-Nov 2026); D5-03 awards (2027).", "ring_why": "A February 2027 regulatory date and a planned Horizon 2027 Innovation Action create a specific near-term proposal window aligned with BLUE capabilities.", "short_name": "Passports & circular data", "sector": "Circularity", "report_label": "Passports, circular data", "report_evidence": "Passport law; Catena-X pilot"}, {"id": "T07", "name": "AI surrogate models for CAE", "theme": "AI", "classification": "Transformative", "classification_why": "Simulation is central to BLUE services. Vendor-reported large acceleration from AI surrogates may change turnaround and pricing expectations, while creating demand for model assurance.", "ring": "Build capability", "description": "Machine-learning reduced-order models trained on simulation data to explore designs in minutes, with high-fidelity solvers kept as the validation reference.", "state_of_art": {"application": "AI reduced-order models for CFD design exploration inside commercial CAE tools", "trl": 8, "evidence": "Siemens Simcenter PhysicsAI released 27 May 2026 as a commercially available add-on to STAR-CCM+, with built-in validation against CFD. Limited operational track record so far, hence 8 not 9."}, "rd_frontier": {"application": "Surrogates credible enough to contribute to validation or homologation evidence", "why": "No public framework yet accepts AI surrogate outputs as validation evidence; links to T04.", "starting_maturity": 3, "status": "proposed starting maturity - to be validated"}, "confidence": "medium", "sources": [{"title": "Siemens: Simcenter PhysicsAI add-on (27 May 2026)", "url": "https://news.siemens.com/en-us/siemens-simcenter-physicsai/", "type": "vendor", "checked_at": "2026-10-20", "access_status": "opened"}], "last_reviewed": "2026-10-20", "evidence_status": "supported", "expected_evolution_2031_2036": "AI surrogates move from fast design exploration to trusted parts of engineering workflows, with quantified error and out-of-distribution checks.", "driver": "Commercial tools (May 2026) report around 1000x faster exploration than full CFD.", "barrier": "Trust: surrogate error outside the training domain; no framework accepts surrogates as validation evidence.", "signpost": "Adoption by BLUE's clients; credibility frameworks extended to ML models.", "ring_why": "Transformative threat and opportunity for BLUE's simulation business: build in-house competence and a model-assurance offer.", "short_name": "AI surrogates for CAE", "sector": "AI & automation", "report_label": "AI surrogates for CAE", "report_evidence": "Commercial CFD surrogate (May 2026)"}, {"id": "T08", "name": "Hydrogen fuel-cell / battery hybrid buses", "theme": "Electrification", "classification": "Core", "classification_why": "BLUE leads the B4IA hydrogen hybrid minibus research project; its published maturity is not assumed to equal that of commercial city buses.", "ring": "Monitor", "description": "Fuel cell plus traction battery for zero-tailpipe-emission urban and suburban buses.", "state_of_art": {"application": "12 m fuel-cell city buses in regular public service", "trl": 9, "evidence": "IVECO BUS GX 337 H2 LINIUM (100 kW fuel cell, 69 kWh battery) in service in Lorient from 22 Dec 2025, 19 buses planned. Tper Bologna started Solaris Urbino 12 hydrogen service on 26 May 2026, 127 buses planned."}, "rd_frontier": {"application": "Hydrogen hybrid minibus with Level 3 automation (B4IA)", "why": "No public results yet; not assessed from public data. B4IA ends 2 Dec 2026.", "starting_maturity": null, "status": "proposed starting maturity - to be validated"}, "confidence": "high (for state of art)", "ring_why": "BLUE already researches hydrogen-hybrid minibuses through B4IA, while commercial hydrogen buses operate elsewhere; prioritize new proposals after checking real cost and infrastructure signals.", "sources": [{"title": "IVECO BUS: first GX 337 H2 LINIUM delivery in Lorient (23 Dec 2025)", "url": "https://www.ivecogroup.com/media/brand_press_releases/2025/EMEA-%28English%29/Iveco-Bus/first_european_delivery_of_the_gx_337_h2_linium_by_iveco_bus_in_lorient_20251223T090610T364_1dkb2tzapcahys3mzkm0pxbw", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "European Hydrogen Observatory: Bologna starts Solaris hydrogen buses (26 May 2026)", "url": "https://observatory.clean-hydrogen.europa.eu/media/news/bologna-starts-operation-solaris-hydrogen-buses-127-unit-fleet-planned", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "BLUE B4IA project page", "url": "https://blue-group.it/b4ia-bus-innovativo-ibrido-idrogeno-integrato-e-autonomo-fondo-per-la-crescita-sostenibile-accordi-per-linnovazione-d-m-31-dicembre-2021-e-d-d-18-marzo-2022/", "type": "company_press", "checked_at": "2026-10-20", "access_status": "opened"}], "watch": [{"date": "2026-12-02", "event": "B4IA ends - look for published results", "precision": "day"}], "last_reviewed": "2026-10-20", "evidence_status": "supported", "expected_evolution_2031_2036": "Hydrogen buses settle into niches (long routes, depots with hydrogen supply) while battery-electric dominates urban fleets.", "driver": "Hydrogen counts as zero-emission under Reg. 2024/1610; 100% zero-emission new urban buses by 2035.", "barrier": "Hydrogen fuel cost and refuelling infrastructure versus falling battery costs.", "signpost": "Hydrogen price per kg at bus depots; fleet orders (e.g. Bologna 127 planned).", "short_name": "Hydrogen hybrid buses", "sector": "Electrification", "report_label": "Hydrogen hybrid buses", "report_evidence": "In service: Lorient, Bologna"}], "recommended_rd": {"name": "CircuTwin-HD", "builds_on": ["T06", "T02", "T03"], "problem": "Whether a used traction inverter should be repaired, remanufactured, reused or recycled depends on how much life its power modules have left. Today this is judged with rule-based checks (age, mileage, fault codes). Passports carry identity data, not the thermal and electrical load history that drives power-module wear.", "research_question": "Can a lifecycle digital twin that combines measured inverter load history, a physics-of-failure damage model with quantified uncertainty, and LCA/LCC choose better repair, remanufacture, reuse or recycling options than rule-based assessment?", "pilot_scope": "Primary component: traction inverter of electric urban buses (power modules, DC-link capacitors). Second application: battery thermal-management system. Both are example components named in topic D5-03 Area B. The existing battery passport is referenced read-only; no new regulatory passport is built.", "blue_role": "Work-package leader for multiphysics simulation, digital-twin architecture and engineering validation (roles BLUE lists in its Cluster 5 profile); LCA support.", "consortium_needed": ["Bus or component OEM (data access)", "Public transport operator (real-life demonstration)", "Remanufacturer or recycler", "University (RUL and LCA methods)", "Data-space / passport platform provider"], "methods": ["Define component identifiers, data model and access policy aligned with battery passport and Catena-X", "Measure real-world electrical, thermal and mechanical loads on the selected components", "Estimate degradation / remaining useful life with quantified uncertainty", "Compare circular options on engineering feasibility, LCA and cost", "Expose results through an API and demonstrate on an operating fleet"], "metrics": ["Remaining-life prediction error and calibration of its uncertainty on test modules", "Share of decisions that match teardown findings, versus the rule-based baseline", "Avoided material and CO2e per component under stated LCA assumptions", "Data points traceable per component and cost of tracing them"], "funding": {"primary": {"topic_id": "HORIZON-CL5-2027-03-D5-03", "title": "Data-driven circular economy for e-mobility ecosystem (2ZERO Partnership)", "fit": "Area B (data-driven EV life-cycle management) is the primary fit: CircuTwin covers all four of its required activities - track and trace of representative components, real-world load measurement, API-based data management, and twin-based passports with LCA. Its remaining-life decision layer also touches Area A (component RUL and circularity strategy), but Area A additionally requires new design-for-dismantling concepts, which CircuTwin does not propose.", "indicative_eu_contribution": "Indicative EUR 5-7M per consortium project across the topic; Area B suggests around EUR 5M. This is not BLUE-specific funding.", "expected_open": "2026-12-15", "deadline": "2027-04-14", "verify": "Innovation Action with lump-sum funding, EUR 24M topic budget, indicative EUR 5-7M EU contribution per consortium project (CORDIS scope: about EUR 7M for Area A, EUR 5M for Area B), planned 15 Dec 2026 opening and 14 Apr 2027 deadline, per the 2026-2027 Work Programme and consistent aggregators. Confirm final conditions on Funding & Tenders at opening.", "action_type": "Innovation Action (IA), lump-sum grant", "total_topic_budget_eur_million": 24}, "fallback": "Italian national 'Accordi per l'innovazione' (the instrument that funds B4IA) for a smaller, Piedmont-based version.", "sources": [{"title": "European Commission Horizon Europe Work Programme 2026-2027, Climate, Energy and Mobility, Call HORIZON-CL5-2027-03", "url": "https://eur-lex.europa.eu/resource.html?format=PDF&uri=cellar%3A238f3caf-d75f-11f0-8da2-01aa75ed71a1.0001.02%2FDOC_9", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "CORDIS topic scope D5-03", "url": "https://cordis.europa.eu/programme/id/HORIZON_HORIZON-CL5-2027-03-D5-03", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "Horizon Europe Mobility 2027 call synthesis", "url": "https://www.welcomeurope.com/en/the-list-of-our-calls-projects/horizon-europe-mobility-2027/", "type": "news", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "FFG (Austrian NCP): Cluster 5 call 2027-03 single stage", "url": "https://www.ffg.at/europa/heu/cluster5/call2027-03-single-stage", "type": "eu_official", "checked_at": "2026-10-20", "access_status": "opened"}, {"title": "KETMarket topic summary: Innovation Action - Lump Sum Grant, EUR 24M, EUR 5-7M per project", "url": "https://ketmarket.eu/funding/data-driven-circular-economy-for-e-mobility-ecosystem-2zero-partnership/", "type": "news", "checked_at": "2026-10-20", "access_status": "opened"}]}, "status": "Candidate research proposal, not a BLUE project. Topic fit is grounded in the Work Programme and CORDIS scope; data access, novelty beyond published abstracts, achievable TRL and consortium eligibility remain to be validated.", "starting_maturity": {"value": null, "label": "to be established", "why": "No BLUE prototype is public. Building blocks exist at lab level (power-cycling damage models); the integrated decision method starts at proof of concept."}, "full_title": "Uncertainty-aware lifecycle digital twin for circular decisions on electric-bus traction inverters", "novelty": {"claim": "A testable research gap, not a proven first. In the published descriptions of the EU projects reviewed, none states that it uses the in-service load history of EV power electronics with quantified remaining-life uncertainty to choose and audit circular decisions. This should be re-checked with project results and patents before a proposal.", "related_work": [{"name": "CREDIT (Horizon Europe, 2024-2027)", "what": "Multi-layer digital twins, AI decision support and traceability for remanufacturing; five cases incl. automotive; targets TRL 7.", "difference": "Cross-industry platform; not focused on power-electronics wear physics or uncertainty in remaining life.", "url": "https://cordis.europa.eu/projects/101138182", "checked_at": "2026-10-20", "access_status": "opened"}, {"name": "RUST2LIFE (Horizon Europe IA, 2026-2029)", "what": "Semantic digital twins linked to the Digital Product Passport, AI agents for triage, disassembly planning and certification, with LCA/LCC; three pilots at automotive remanufacturing sites; targets TRL 7.", "difference": "Closest project. Its public description covers the remanufacturing factory workflow; it does not mention remaining useful life or power electronics.", "url": "https://cordis.europa.eu/project/id/101295335", "checked_at": "2026-10-20", "access_status": "opened"}, {"name": "RESURRECTION (Horizon Europe, 2026-2030)", "what": "AI and robotics decision support for remanufacturing electronics; pilots incl. EV batteries; uses DPP and digital twins.", "difference": "Diagnosis and robotic disassembly at end of life; does not use in-service load history of traction inverters.", "url": "https://cordis.europa.eu/project/id/101294921", "checked_at": "2026-10-20", "access_status": "opened"}, {"name": "Remanufacturing-X (Horizon Europe, 2026-2029)", "what": "Remanufacturing DPP, data space and marketplace; pilots in textile, food, machinery, maritime, batteries.", "difference": "Data infrastructure and market; no EV power electronics pilot.", "url": "https://cordis.europa.eu/project/id/101295053", "checked_at": "2026-10-20", "access_status": "opened"}, {"name": "Kim, Lee, Han (PHME 2026)", "what": "Physics-of-failure state-of-damage metric for discrete IGBTs in EVs, validated by power cycling.", "difference": "Shows the damage-model building block is feasible in the lab; does not link it to circular decisions or LCA.", "url": "https://papers.phmsociety.org/index.php/phme/article/view/4920", "checked_at": "2026-10-20", "access_status": "opened"}], "review_note": "An earlier version of this file wrongly stated that RUST2LIFE could not be found; it was located on CORDIS (grant 101295335) and is now included."}, "work_plan": ["WP1 Data model and access: component IDs, load-history data points, access rules aligned with battery passport and Catena-X", "WP2 Measurement: log electrical and thermal loads of inverters on an operating e-bus fleet", "WP3 Damage and remaining life: physics-of-failure model calibrated on power-cycling tests, with uncertainty", "WP4 Decision layer: compare repair / remanufacture / reuse / recycle on remaining life, LCA and cost", "WP5 Demonstration: blind comparison against rule-based decisions on returned components"]}, "watchlist": [{"date": "2026-11", "trend": "T06", "event": "Catena-X China operations due to start (mid-November)", "precision": "month", "reviewed_at": null}, {"date": "2026-12-02", "trend": "T08", "event": "B4IA ends", "precision": "day", "reviewed_at": null}, {"date": "2026-12-15", "trend": "T06", "event": "Call HORIZON-CL5-2027-03 expected to open", "precision": "day", "reviewed_at": null}, {"date": "2027-02-18", "trend": "T06", "event": "Battery passport mandatory", "precision": "day", "reviewed_at": null}, {"date": "2027-04-14", "trend": "T01/T06", "event": "Call HORIZON-CL5-2027-03 deadline", "precision": "day", "reviewed_at": null}, {"date": "2027-06-30", "trend": "T02", "event": "InnoBMS ends", "precision": "day", "reviewed_at": null}, {"date": "2027-08-18", "trend": "T06", "event": "Battery due-diligence obligations apply", "precision": "day", "reviewed_at": null}, {"date": "2027-12-31", "trend": "T03", "event": "TWIN-LOOP ends", "precision": "day", "reviewed_at": null}, {"date": "2027", "precision": "year", "trend": "T04", "event": "Watch for adopted UN R152 virtual-testing text and first virtual-evidence type approval", "reviewed_at": null}, {"date": "2027-06-30", "precision": "day", "trend": "T03", "event": "MINDED ends", "reviewed_at": null}], "maintenance": {"owner": "R&D trend-radar owner (intern) with quarterly sign-off by Head of R&D", "cadence": "Quarterly review plus event-triggered review on any watchlist date", "change_rule": "A TRL or ring changes only with a new dated source, a one-line rationale and a confidence value, committed to git so history is auditable.", "retire_rule": "Move to Monitor after two reviews without new evidence; remove if merged into another trend or no longer relevant to BLUE.", "signal_sources": ["CORDIS project results (results, not objectives)", "EU Funding & Tenders portal and 2ZERO updates", "EUR-Lex and UNECE WP.29", "OEM and supplier announcements", "Catena-X", "Espacenet patent families", "Local signals: Torino City Lab, Regione Piemonte"], "data_policy": "Public or licensed data only; no client or employer confidential information."}};
+(function(){
+"use strict";
+if(!DATA){document.body.innerHTML="<p style='padding:24px'>No data embedded. Run <code>python tools/radar.py build</code>.</p>";return;}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const T=DATA.trends;
+const RINGS=["Engage now","Build capability","Monitor"];
+const SECTORS=["Electrification","Digital twins & validation","AI & automation","Circularity"];
+const CLS={Core:"core",Adjacent:"adjacent",Transformative:"transformative"};
+const TYPE={regulation:"Regulation",eu_official:"EU official",project_report:"Project report",company_press:"Company release",vendor:"Vendor",public_authority:"Public authority",academic:"Academic",news:"News"};
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let state={sel:"T06",ring:null,cls:null};
+
+function fmtDate(s,prec){const p=String(s).split("-").map(Number);
+  if(p.length===1)return String(p[0]);
+  if(p.length===2||prec==="month")return (prec==="month"?"mid-":"")+MONTHS[p[1]-1]+" "+p[0];
+  return p[2]+" "+MONTHS[p[1]-1]+" "+p[0];}
+function toDate(s){const p=String(s).split("-").map(Number);if(p.length===1)return new Date(p[0],11,31);if(p.length===2)return new Date(p[0],p[1],0);return new Date(p[0],p[1]-1,p[2]);}
+const today=new Date();
+
+/* header + kpis */
+const m=DATA.meta;
+$("#lede").textContent=`${T.length} technology trends for zero-emission buses, coaches, vans and trucks, assessed for BLUE's R&D over ${m.horizon}. Each trend shows two separate things: how mature the technology already is in industry, and where BLUE could still do research.`;
+const cnt=r=>T.filter(t=>t.ring===r).length;
+const upcoming=DATA.watchlist.map(w=>({...w,d:toDate(w.date)})).filter(w=>w.d>=new Date(today.getFullYear(),today.getMonth(),today.getDate())).sort((a,b)=>a.d-b.d);
+const nx=upcoming[0];
+$("#kpis").innerHTML=
+  `<div class="kpi"><div class="v">${cnt("Engage now")}</div><div class="l">Engage now: act in the next proposal cycle</div></div>`+
+  `<div class="kpi"><div class="v">${cnt("Build capability")}</div><div class="l">Build capability: demand in 2–5 years</div></div>`+
+  `<div class="kpi"><div class="v">${cnt("Monitor")}</div><div class="l">Monitor: track signals only</div></div>`+
+  (nx?`<div class="kpi next"><div class="v">${esc(fmtDate(nx.date,nx.precision))}</div><div class="l">Next review trigger: ${esc(nx.event)}</div></div>`:`<div class="kpi"><div class="v">–</div><div class="l">No upcoming triggers</div></div>`);
+
+/* filters */
+function chipRow(){
+  const f=$("#filters");
+  let h=`<span class="lab">Ring</span>`;
+  RINGS.forEach(r=>h+=`<button class="chip" data-k="ring" data-v="${r}" aria-pressed="${state.ring===r}">${r}</button>`);
+  h+=`<span class="lab" style="margin-left:8px">Class</span>`;
+  Object.keys(CLS).forEach(c=>h+=`<button class="chip" data-k="cls" data-v="${c}" aria-pressed="${state.cls===c}">${c}</button>`);
+  f.innerHTML=h;
+  f.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const k=b.dataset.k,v=b.dataset.v;state[k]=state[k]===v?null:v;chipRow();drawRadar();drawTable();});
+}
+const visible=t=>(!state.ring||t.ring===state.ring)&&(!state.cls||t.classification===state.cls);
+
+/* radar */
+const C=320,R=[34,160,236,298];
+function polar(r,deg){const a=(deg-90)*Math.PI/180;return [C+r*Math.cos(a),C+r*Math.sin(a)];}
+function shape(cls,x,y,s,fill,stroke,dash){
+  const st=`fill="${fill}" stroke="${stroke}" stroke-width="2.4"${dash?' stroke-dasharray="3 2.5"':""}`;
+  if(cls==="Core")return `<circle cx="${x}" cy="${y}" r="${s}" ${st}/>`;
+  if(cls==="Adjacent")return `<rect x="${x-s*.9}" y="${y-s*.9}" width="${s*1.8}" height="${s*1.8}" rx="3" transform="rotate(45 ${x} ${y})" ${st}/>`;
+  return `<path d="M${x} ${y-s*1.15} L${x+s*1.1} ${y+s*.8} L${x-s*1.1} ${y+s*.8}Z" ${st} stroke-linejoin="round"/>`;
+}
+function colorOf(cls){return getComputedStyle(document.documentElement).getPropertyValue({Core:"--core",Adjacent:"--adjacent",Transformative:"--transf"}[cls]).trim();}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function layout(){
+  const pos={};
+  SECTORS.forEach((s,si)=>{
+    RINGS.forEach((r,ri)=>{
+      const items=T.filter(t=>t.sector===s&&t.ring===r);
+      items.forEach((t,k)=>{
+        const ang=si*90+(k+1)*90/(items.length+1);
+        const rad=(R[ri]+R[ri+1])/2+(items.length>1?(k%2?14:-14):0);
+        pos[t.id]=polar(rad,ang);
+      });
+    });
+  });
+  return pos;
+}
+function drawRadar(){
+  const svg=$("#radar"),pos=layout();
+  let h="";
+  [[3,"--ring3"],[2,"--ring2"],[1,"--ring1"]].forEach(([i,v])=>h+=`<circle cx="${C}" cy="${C}" r="${R[i]}" fill="${css(v)}" stroke="${css("--line")}"/>`);
+  h+=`<circle cx="${C}" cy="${C}" r="${R[0]}" fill="${css("--surface")}" stroke="${css("--line")}"/><text x="${C}" y="${C+4}" text-anchor="middle" font-size="11" font-weight="700" fill="${css("--brand")}">BLUE</text>`;
+  for(let i=0;i<4;i++){const [x,y]=polar(R[3],i*90);h+=`<line x1="${C}" y1="${C}" x2="${x}" y2="${y}" stroke="${css("--line")}"/>`;}
+  RINGS.forEach((r,i)=>{h+=`<text x="${C+4}" y="${C-R[i+1]+15}" font-size="11.5" fill="${css("--ink-3")}" font-weight="600" letter-spacing=".04em">${r.toUpperCase()}</text>`;});
+  const lab=[[ -1,-1,"start"],[1,-1,"end"],[1,1,"end"],[-1,1,"start"]];
+  const anchors=[[18,24,"start"],[622,24,"end"],[622,628,"end"],[18,628,"start"]];
+  // sectors clockwise from top: 0 = top-right quadrant
+  const sectorAnchor=[[622,24,"end"],[622,628,"end"],[18,628,"start"],[18,24,"start"]];
+  SECTORS.forEach((s,i)=>{const [x,y,a]=sectorAnchor[i];h+=`<text x="${x}" y="${y}" text-anchor="${a}" font-size="14" font-weight="700" fill="${css("--ink-2")}">${esc(s)}</text>`;});
+  // label placement with simple collision avoidance
+  const boxes=T.map(t=>{const [x,y]=pos[t.id];return {x:x-16,y:y-16,w:32,h:32};});
+  const hit=(a,b)=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;
+  const labels={};
+  T.forEach(t=>{
+    const [x,y]=pos[t.id],w=t.short_name.length*6.3,hh=14;
+    const cands=[[x,y+30,"middle"],[x,y-21,"middle"],[x+20,y+4,"start"],[x-20,y+4,"end"],[x,y+44,"middle"],[x,y-35,"middle"]];
+    for(const [lx,ly,a] of cands){
+      const bx=a==="middle"?lx-w/2:a==="start"?lx:lx-w, b={x:bx,y:ly-11,w:w,h:hh};
+      if(b.x<4||b.x+b.w>636||boxes.some(o=>hit(o,b)))continue;
+      boxes.push(b);labels[t.id]=[lx,ly,a];break;
+    }
+    if(!labels[t.id])labels[t.id]=[x,y+30,"middle"];
+  });
+  T.forEach((t,i)=>{
+    const [x,y]=pos[t.id],col=colorOf(t.classification),prov=t.evidence_status==="provisional";
+    const [lx,ly,la]=labels[t.id];
+    const sel=state.sel===t.id?" sel":"",dim=visible(t)?"":" dim";
+    h+=`<g class="blip${sel}${dim}" tabindex="0" role="button" data-id="${t.id}" aria-label="${esc(t.short_name)}, ${esc(t.ring)}, ${esc(t.classification)}, TRL ${t.state_of_art.trl}">`+
+       `<circle class="halo" cx="${x}" cy="${y}" r="22" fill="${col}" opacity=".15"/>`+
+       shape(t.classification,x,y,13,prov?css("--surface"):col,col,prov)+
+       `<text x="${x}" y="${y+4.5}" text-anchor="middle" font-size="12" font-weight="700" fill="${prov?col:css("--surface")}">${i+1}</text>`+
+       `<text x="${lx}" y="${ly}" text-anchor="${la}" font-size="11.5" fill="${css("--ink-2")}" paint-order="stroke" stroke="${css("--ring1")}" stroke-width="3">${esc(t.short_name)}</text></g>`;
+  });
+  svg.innerHTML=h;
+  svg.querySelectorAll(".blip").forEach(g=>{
+    const go=()=>{state.sel=g.dataset.id;drawRadar();drawDetail();drawTable();};
+    g.onclick=go;g.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}};
+  });
+}
+function legend(){
+  const sw=(cls,prov)=>{const c=colorOf(cls);return `<svg width="20" height="20" viewBox="0 0 30 30" aria-hidden="true">${shape(cls,15,15,9,prov?css("--surface"):c,c,prov)}</svg>`;};
+  $("#legend").innerHTML=`<span>${sw("Core")}Core</span><span>${sw("Adjacent")}Adjacent</span><span>${sw("Transformative")}Transformative</span><span>${sw("Core",true)}Hollow = TRL provisional</span>`;
+}
+
+/* detail */
+function cells(n,assume){let h="";for(let i=1;i<=9;i++)h+=`<i class="${i<=n?(assume?"assume":"on"):""}"></i>`;return `<div class="cells" aria-hidden="true">${h}</div>`;}
+function drawDetail(){
+  const t=T.find(x=>x.id===state.sel);if(!t)return;
+  const f=t.rd_frontier,sm=f.starting_maturity;
+  const srcs=t.sources.map(s=>`<li><span class="ty">${esc(TYPE[s.type]||s.type)}</span><span><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>${s.access_status!=="opened"?` <span class="no">(not re-read)</span>`:""}</span></li>`).join("");
+  $("#detail").innerHTML=
+   `<div class="eyebrow" style="font-size:12px;color:var(--ink-3);font-weight:600">${esc(t.id)} · ${esc(t.sector)}</div>`+
+   `<h2>${esc(t.name)}</h2>`+
+   `<div class="tags"><span class="tag ${CLS[t.classification]}">${esc(t.classification)}</span><span class="tag">${esc(t.ring)}</span>`+
+   `<span class="tag ${t.evidence_status==="provisional"?"prov":"sup"}">TRL ${t.evidence_status}</span><span class="tag">Confidence: ${esc(t.confidence)}</span></div>`+
+   `<p style="margin:0;color:var(--ink-2)">${esc(t.description)}</p>`+
+   `<div class="meters">`+
+     `<div class="meter"><div class="t">Industry maturity</div><div class="val">TRL ${t.state_of_art.trl}</div>${cells(t.state_of_art.trl)}<div class="s">${esc(t.state_of_art.application)}</div></div>`+
+     `<div class="meter"><div class="t">BLUE R&amp;D opportunity</div><div class="val">${sm==null?"Starting point to establish":"Start ≈ TRL "+sm}</div>${sm==null?cells(0):cells(sm,true)}<div class="s">${esc(f.application)}<br><em>${sm==null?"":"Assumption, to be validated."}</em></div></div>`+
+   `</div>`+
+   `<div class="sec"><h3>Evidence</h3><p>${esc(t.state_of_art.evidence)}</p></div>`+
+   `<div class="sec"><h3>Outlook 2031–2036 (scenario)</h3><p>${esc(t.expected_evolution_2031_2036)}</p></div>`+
+   `<div class="sec dbx"><div><h3>Driver</h3><p>${esc(t.driver)}</p></div><div><h3>Barrier</h3><p>${esc(t.barrier)}</p></div></div>`+
+   `<div class="sec"><h3>Why “${esc(t.ring)}”</h3><p>${esc(t.ring_why)}</p></div>`+
+   `<div class="sec"><h3>Signpost to watch</h3><p>${esc(t.signpost)}</p></div>`+
+   (t.open_check?`<div class="sec"><h3>Open check</h3><p>${esc(t.open_check)}</p></div>`:"")+
+   `<div class="sec"><h3>Sources (${t.sources.length})</h3><ul class="src">${srcs}</ul></div>`;
+}
+
+/* table */
+function drawTable(){
+  let h=`<thead><tr><th>#</th><th>Trend</th><th>Sector</th><th>Class</th><th>Ring</th><th>Industry TRL</th><th>R&amp;D frontier</th></tr></thead><tbody>`;
+  T.forEach((t,i)=>{if(!visible(t))return;
+    h+=`<tr data-id="${t.id}"${state.sel===t.id?' style="outline:2px solid var(--brand);outline-offset:-2px"':""}><td class="num">${i+1}</td><td><strong>${esc(t.short_name)}</strong></td><td>${esc(t.sector)}</td>`+
+       `<td><span class="tag ${CLS[t.classification]}">${esc(t.classification)}</span></td><td>${esc(t.ring)}</td>`+
+       `<td class="num">${t.state_of_art.trl}${t.evidence_status==="provisional"?' <span class="tag prov">provisional</span>':""}</td><td>${esc(t.rd_frontier.application)}</td></tr>`;});
+  $("#table").innerHTML=h+"</tbody>";
+  $("#table").querySelectorAll("tr[data-id]").forEach(r=>r.onclick=()=>{state.sel=r.dataset.id;drawRadar();drawDetail();drawTable();$("#detail").scrollIntoView({behavior:"smooth",block:"nearest"});});
+}
+
+/* timeline */
+function drawTimeline(){
+  const ev=DATA.watchlist.map(w=>({...w,d:toDate(w.date)})).sort((a,b)=>a.d-b.d);
+  const start=new Date(2026,9,1),end=new Date(2028,0,1),W=1000,x0=30,x1=970;
+  const X=d=>x0+(x1-x0)*(d-start)/(end-start);
+  let h=`<line x1="${x0}" y1="60" x2="${x1}" y2="60" stroke="${css("--line")}" stroke-width="2"/>`;
+  for(let mth=0;mth<=15;mth++){const d=new Date(2026,9+mth,1),x=X(d);
+    h+=`<line x1="${x}" y1="55" x2="${x}" y2="65" stroke="${css("--line")}"/>`;
+    if(mth%3===0)h+=`<text x="${x}" y="84" font-size="12" fill="${css("--ink-3")}" text-anchor="middle">${MONTHS[d.getMonth()]} ${d.getFullYear()}</text>`;}
+  const tx=X(today);
+  if(tx>=x0&&tx<=x1)h+=`<line x1="${tx}" y1="28" x2="${tx}" y2="92" stroke="${css("--transf")}" stroke-width="2" stroke-dasharray="4 3"/><text x="${tx}" y="22" font-size="11.5" font-weight="700" fill="${css("--transf")}" text-anchor="middle">TODAY</text>`;
+  ev.forEach((e,i)=>{if(e.precision==="year")return;const x=X(e.d);h+=`<circle cx="${x}" cy="60" r="7" fill="${e.d<today?css("--ink-3"):css("--brand")}" stroke="${css("--surface")}" stroke-width="2"/><text x="${x}" y="${i%2?110:44}" font-size="11.5" font-weight="700" fill="${css("--ink-2")}" text-anchor="middle">${esc(e.trend)}</text>`;});
+  $("#tl").innerHTML=h;
+  $("#events").innerHTML=ev.map(e=>`<div class="ev${e.d<today?" past":""}"><div class="d">${esc(fmtDate(e.date,e.precision))} · ${esc(e.trend)}</div><div class="e">${esc(e.event)}</div></div>`).join("");
+}
+
+/* proposal */
+function drawProposal(){
+  const p=DATA.recommended_rd,f=p.funding.primary;
+  const rel=p.novelty.related_work.map(r=>`<tr><td><a href="${esc(r.url)}" target="_blank" rel="noopener"><strong>${esc(r.name)}</strong></a></td><td>${esc(r.what)}</td><td>${esc(r.difference)}</td></tr>`).join("");
+  $("#proposal").innerHTML=
+   `<div class="kick">Recommended R&amp;D project · builds on ${p.builds_on.join(", ")}</div>`+
+   `<h2>${esc(p.name)}</h2><p class="sub">${esc(p.full_title)}</p>`+
+   `<div class="flow" aria-label="Concept"><span class="n">Inverter load history</span><span class="a">+</span><span class="n">Damage model with uncertainty</span><span class="a">+</span><span class="n">LCA / cost</span><span class="a">→</span><span class="dec"><span>Repair</span><span>Remanufacture</span><span>Reuse</span><span>Recycle</span></span></div>`+
+   `<div class="two"><div><div class="sec"><h3>Problem</h3><p>${esc(p.problem)}</p></div>`+
+   `<div class="rq"><strong>Research question.</strong> ${esc(p.research_question)}</div>`+
+   `<div class="sec"><h3>Scope</h3><p>${esc(p.pilot_scope)}</p></div>`+
+   `<div class="sec"><h3>BLUE's role</h3><p>${esc(p.blue_role)}</p></div></div>`+
+   `<div><div class="sec"><h3>Work plan</h3><ol class="wp">${p.work_plan.map(w=>`<li>${esc(w)}</li>`).join("")}</ol></div>`+
+   `<div class="sec"><h3>Success measures</h3><ul class="km">${p.metrics.map(w=>`<li>${esc(w)}</li>`).join("")}</ul></div>`+
+   `<div class="sec"><h3>Funding route</h3><p><strong>${esc(f.topic_id)}</strong> · ${esc(f.title)}<br>${esc(f.fit)} Planned opening ${esc(fmtDate(f.expected_open))}, deadline ${esc(fmtDate(f.deadline))}. ${esc(f.indicative_eu_contribution)}<br><em>${esc(f.verify)}</em><br>Fallback: ${esc(p.funding.fallback)}</p></div></div></div>`+
+   `<div class="sec" style="margin-top:16px"><h3>Novelty check: how this differs from running EU projects</h3><p style="margin-bottom:8px">${esc(p.novelty.claim)}</p>`+
+   `<div class="scroll"><table class="tbl"><thead><tr><th>Related work</th><th>What it does</th><th>Gap CircuTwin addresses</th></tr></thead><tbody>${rel}</tbody></table></div></div>`+
+   `<p style="font-size:13px;color:var(--ink-3);margin:10px 0 0">${esc(p.status)}</p>`;
+}
+
+/* drivers + method */
+function drawDrivers(){
+  $("#drivers").innerHTML=DATA.drivers.map(d=>`<div class="card drv"><h3>${esc(d.name)}</h3><p>${esc(d.facts)}</p><p style="margin-top:6px;font-size:12.5px;color:var(--ink-3)">Affects ${d.affects.join(", ")}</p></div>`).join("");
+  const dl=o=>`<dl>${Object.entries(o).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`;
+  $("#method").innerHTML=
+   `<div class="card"><h3>Two maturity values</h3><p style="margin:0;color:var(--ink-2)">${esc(m.trl_policy)}</p><p style="margin:8px 0 0"><a href="${esc(m.trl_scale.url)}" target="_blank" rel="noopener">EU TRL definitions</a></p></div>`+
+   `<div class="card"><h3>Classification for BLUE</h3>${dl(m.classification_policy)}</div>`+
+   `<div class="card"><h3>Rings = recommended action</h3>${dl(m.ring_policy)}</div>`;
+  $("#foot").innerHTML=`Data version ${esc(m.version)} · researched ${esc(fmtDate(m.research_date))} · ${esc(m.author)}. Source data: <code>data/trends.json</code>; rebuild with <code>python tools/radar.py all</code>. ${esc(m.ai_use)}`;
+}
+
+chipRow();legend();drawRadar();drawDetail();drawTable();drawTimeline();drawProposal();drawDrivers();
+if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{legend();drawRadar();drawTimeline();});
+})();
+</script>
+</body>
+</html>
