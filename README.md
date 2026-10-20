@@ -8,17 +8,30 @@ A mini technology radar for BLUE Engineering's R&D team, covering **automotive**
 | Write-up (2 pages) | [`report/report.pdf`](report/report.pdf) · source [`report/report.tex`](report/report.tex) (its table, `radar_table.tex`, is generated from the data) |
 | Data file | [`data/trends.json`](data/trends.json) (master) · [`data/trends.csv`](data/trends.csv) (spreadsheet export) |
 | Dashboard | [`docs/index.html`](docs/index.html) |
-| Screening and audit | [`research/longlist_screen.csv`](research/longlist_screen.csv) · [`research/SOURCE_AUDIT.md`](research/SOURCE_AUDIT.md) |
+| Supporting analysis | [`research/PRIORITIZATION.md`](research/PRIORITIZATION.md) · [`research/FEASIBILITY.md`](research/FEASIBILITY.md) · [`research/longlist_screen.csv`](research/longlist_screen.csv) · [`research/SOURCE_AUDIT.md`](research/SOURCE_AUDIT.md) |
 | Maintenance tool | [`tools/radar.py`](tools/radar.py) · monthly check [`.github/workflows/radar-check.yml`](.github/workflows/radar-check.yml) |
+
+## Supporting analysis
+
+The two-page report is the summary; these files hold the reasoning behind it.
+
+- **[Technology prioritisation](research/PRIORITIZATION.md)** – a weighted score for each trend (strategic fit 30%,
+  R&D opportunity 25%, funding & timing 20%, feasibility 15%, evidence 10%) with the reason for every score, and a
+  sensitivity test: weights varied 5,000 times. The CircuTwin parent trend (T06) ranks first in 99% of cases.
+  Generated from the data by `python tools/radar.py score`.
+- **[CircuTwin-HD feasibility plan](research/FEASIBILITY.md)** – riskiest assumptions, data sources and fallbacks
+  (including a public NASA IGBT ageing dataset for a first proof of concept), stage gates with stop criteria,
+  success measures and risks.
+- **[Long-list screening](research/longlist_screen.csv)** – how 20 candidates became 8.
+- **[Source audit](research/SOURCE_AUDIT.md)** – what each key source does and does not prove.
 
 ## Open the dashboard
 
 **Option 1 – no installation:** download the repository and double-click `docs/index.html`.
 It is a single self-contained file (data embedded, no server, no internet needed).
 
-**Option 2 – online (after you enable Pages):** the dashboard can be published with GitHub Pages:
-`https://<github-user>.github.io/BLUE-Trend-Radar/`
-(Settings → Pages → Deploy from branch → `main` / `docs`).
+**Option 2 – online:** [Open the live dashboard](https://saharirostami.github.io/BLUE-Trend-Radar/).
+Published with GitHub Pages from branch `main` and folder `/docs`.
 
 What it shows:
 - **Radar**: four sectors (Electrification, Digital twins & validation, AI & automation, Circularity) and three

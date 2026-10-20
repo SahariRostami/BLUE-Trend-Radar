@@ -290,6 +290,22 @@ function legend(){
   $("#legend").innerHTML=`<span>${sw("Core")}Core</span><span>${sw("Adjacent")}Adjacent</span><span>${sw("Transformative")}Transformative</span><span>${sw("Core",true)}Hollow = TRL provisional</span>`;
 }
 
+/* priority */
+const PM=m.priority_model||{weights:{}};
+const RANK=T.filter(t=>t.priority).slice().sort((a,b)=>b.priority.total-a.priority.total).map(t=>t.id);
+const rankOf=id=>RANK.indexOf(id)+1;
+const PLAB={strategic_fit:"Strategic fit",rd_opportunity:"R&D opportunity",funding_timing:"Funding & timing",feasibility:"Feasibility",evidence_confidence:"Evidence"};
+function priorityBlock(t){
+  if(!t.priority)return "";
+  const rows=Object.keys(PM.weights).map(k=>{const v=t.priority.scores[k];
+    return `<div style="display:grid;grid-template-columns:132px 1fr 28px;gap:8px;align-items:center;font-size:13px" title="${esc(t.priority.rationale[k])}">`+
+      `<span style="color:var(--ink-2)">${PLAB[k]} <span style="color:var(--ink-3)">${Math.round(PM.weights[k]*100)}%</span></span>`+
+      `<span style="height:8px;background:var(--line);border-radius:4px;overflow:hidden"><span style="display:block;height:100%;width:${v*20}%;background:var(--brand)"></span></span>`+
+      `<span class="num" style="text-align:right">${v}/5</span></div>`;}).join("");
+  return `<div class="sec"><h3>Priority score ${t.priority.total.toFixed(2)} / 5 · rank ${rankOf(t.id)} of ${RANK.length}</h3><div style="display:grid;gap:5px;margin-top:4px">${rows}</div>`+
+         `<p style="font-size:12.5px;color:var(--ink-3);margin-top:6px">Hover a bar for the reason. Ranking stress-tested against weight changes in <code>research/PRIORITIZATION.md</code>.</p></div>`;
+}
+
 /* detail */
 function cells(n,assume){let h="";for(let i=1;i<=9;i++)h+=`<i class="${i<=n?(assume?"assume":"on"):""}"></i>`;return `<div class="cells" aria-hidden="true">${h}</div>`;}
 function drawDetail(){
@@ -310,6 +326,7 @@ function drawDetail(){
    `<div class="sec"><h3>Outlook 2031–2036 (scenario)</h3><p>${esc(t.expected_evolution_2031_2036)}</p></div>`+
    `<div class="sec dbx"><div><h3>Driver</h3><p>${esc(t.driver)}</p></div><div><h3>Barrier</h3><p>${esc(t.barrier)}</p></div></div>`+
    `<div class="sec"><h3>Why “${esc(t.ring)}”</h3><p>${esc(t.ring_why)}</p></div>`+
+   priorityBlock(t)+
    `<div class="sec"><h3>Signpost to watch</h3><p>${esc(t.signpost)}</p></div>`+
    (t.open_check?`<div class="sec"><h3>Open check</h3><p>${esc(t.open_check)}</p></div>`:"")+
    `<div class="sec"><h3>Sources (${t.sources.length})</h3><ul class="src">${srcs}</ul></div>`;
@@ -317,11 +334,12 @@ function drawDetail(){
 
 /* table */
 function drawTable(){
-  let h=`<thead><tr><th>#</th><th>Trend</th><th>Sector</th><th>Class</th><th>Ring</th><th>Industry TRL</th><th>R&amp;D frontier</th></tr></thead><tbody>`;
+  let h=`<thead><tr><th>#</th><th>Trend</th><th>Sector</th><th>Class</th><th>Ring</th><th>Industry TRL</th><th>Priority score</th><th>R&amp;D frontier</th></tr></thead><tbody>`;
   T.forEach((t,i)=>{if(!visible(t))return;
     h+=`<tr data-id="${t.id}"${state.sel===t.id?' style="outline:2px solid var(--brand);outline-offset:-2px"':""}><td class="num">${i+1}</td><td><strong>${esc(t.short_name)}</strong></td><td>${esc(t.sector)}</td>`+
        `<td><span class="tag ${CLS[t.classification]}">${esc(t.classification)}</span></td><td>${esc(t.ring)}</td>`+
-       `<td class="num">${t.state_of_art.trl}${t.evidence_status==="provisional"?' <span class="tag prov">provisional</span>':""}</td><td>${esc(t.rd_frontier.application)}</td></tr>`;});
+       `<td class="num">${t.state_of_art.trl}${t.evidence_status==="provisional"?' <span class="tag prov">provisional</span>':""}</td>`+
+       `<td class="num">${t.priority?t.priority.total.toFixed(2):"–"} <span style="color:var(--ink-3);font-weight:400">#${rankOf(t.id)}</span></td><td>${esc(t.rd_frontier.application)}</td></tr>`;});
   $("#table").innerHTML=h+"</tbody>";
   $("#table").querySelectorAll("tr[data-id]").forEach(r=>r.onclick=()=>{state.sel=r.dataset.id;drawRadar();drawDetail();drawTable();$("#detail").scrollIntoView({behavior:"smooth",block:"nearest"});});
 }

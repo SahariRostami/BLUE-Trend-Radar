@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "BLUE Engineering Trend Radar - Automotive (commercial vehicles)",
-    "version": "6.1",
+    "version": "6.2",
     "sector": "Automotive",
     "focus": "Smart, sustainable and circular zero-emission commercial mobility (buses, coaches, vans, trucks)",
     "research_date": "2026-10-20",
@@ -33,7 +33,26 @@
       "news": "Trade or general press"
     },
     "schema_note": "Sources carry 'checked_at' (date the link was opened) and 'access_status' ('opened' = content read and claim matched; 'not_opened' = cited but not re-read in this review). Dates in watch lists carry 'precision' ('day', 'month').",
-    "ai_use": "AI tools supported research and drafting. Claims are attributed to dated public sources; some maturity values remain analyst estimates and are marked provisional."
+    "ai_use": "AI tools supported research and drafting. Claims are attributed to dated public sources; some maturity values remain analyst estimates and are marked provisional.",
+    "priority_model": {
+      "purpose": "Explain and stress-test the ranking of the eight trends for BLUE. It complements the rings (timing of action); it does not replace them.",
+      "scale": "1 (weak) to 5 (strong) per criterion; score = weighted sum, maximum 5.",
+      "weights": {
+        "strategic_fit": 0.3,
+        "rd_opportunity": 0.25,
+        "funding_timing": 0.2,
+        "feasibility": 0.15,
+        "evidence_confidence": 0.1
+      },
+      "criteria": {
+        "strategic_fit": "How directly the trend uses capabilities BLUE publicly lists (Cluster 5 profile, services profile, running projects).",
+        "rd_opportunity": "Size of the unsolved, researchable gap left for BLUE (rd_frontier), not the size of the market.",
+        "funding_timing": "A concrete funding call, regulatory date or customer signal within about 24 months.",
+        "feasibility": "Whether BLUE could realistically access data, partners and test assets for a first project.",
+        "evidence_confidence": "Quality of the evidence behind the industry TRL (provisional = lower)."
+      },
+      "caveat": "Scores are analyst judgements written down so they can be challenged. They were set per criterion before computing totals and were not adjusted afterwards."
+    }
   },
   "blue_context": {
     "summary": "BLUE's Head of R&D publicly lists electric and high-voltage powertrain integration, digital twins, AI-assisted predictive maintenance, design for disassembly/repair/reuse/recycling, lifecycle assessment and virtual validation as core capabilities, and names data-driven decisions on component reuse, remanufacturing and second life as a target area.",
@@ -205,7 +224,24 @@
       "short_name": "MCS heavy-duty powertrains",
       "sector": "Electrification",
       "report_label": "MCS heavy-duty powertrains",
-      "report_evidence": "1\\,MW demo, 3 OEMs; MAN offers MCS"
+      "report_evidence": "1\\,MW demo, 3 OEMs; MAN offers MCS",
+      "priority": {
+        "scores": {
+          "strategic_fit": 4,
+          "rd_opportunity": 4,
+          "funding_timing": 5,
+          "feasibility": 3,
+          "evidence_confidence": 4
+        },
+        "rationale": {
+          "strategic_fit": "HV powertrain integration and thermal simulation are listed BLUE capabilities.",
+          "rd_opportunity": "Higher-voltage modular HDV powertrains are still open (subject of call D5-05).",
+          "funding_timing": "Dedicated 2027 Horizon topic D5-05, same call deadline as D5-03.",
+          "feasibility": "Needs a truck OEM and HV hardware access; BLUE would be an engineering partner, not the owner.",
+          "evidence_confidence": "Live interoperable demo and series offer, but company-reported."
+        },
+        "total": 4.05
+      }
     },
     {
       "id": "T02",
@@ -274,7 +310,24 @@
       "short_name": "Battery health analytics",
       "sector": "Electrification",
       "report_label": "Battery health analytics",
-      "report_evidence": "Commercial e-bus SOH service since 2020"
+      "report_evidence": "Commercial e-bus SOH service since 2020",
+      "priority": {
+        "scores": {
+          "strategic_fit": 3,
+          "rd_opportunity": 3,
+          "funding_timing": 4,
+          "feasibility": 3,
+          "evidence_confidence": 4
+        },
+        "rationale": {
+          "strategic_fit": "Adjacent: builds on BLUE's predictive-maintenance work but battery analytics is a specialist field.",
+          "rd_opportunity": "Commercial services exist; the open gap is OEM-independent remaining life with uncertainty.",
+          "funding_timing": "Battery passport (Feb 2027) creates demand for state-of-health data.",
+          "feasibility": "Raw BMS data access from OEMs is the main barrier.",
+          "evidence_confidence": "Commercial offer since 2020 plus peer-reviewed fleet study."
+        },
+        "total": 3.3
+      }
     },
     {
       "id": "T03",
@@ -334,7 +387,24 @@
       "short_name": "Vehicle & fleet digital twins",
       "sector": "Digital twins & validation",
       "report_label": "Vehicle/fleet twins",
-      "report_evidence": "Minibus subsystem twin validated (MINDED)"
+      "report_evidence": "Minibus subsystem twin validated (MINDED)",
+      "priority": {
+        "scores": {
+          "strategic_fit": 5,
+          "rd_opportunity": 4,
+          "funding_timing": 3,
+          "feasibility": 3,
+          "evidence_confidence": 3
+        },
+        "rationale": {
+          "strategic_fit": "Digital twins are a headline BLUE capability.",
+          "rd_opportunity": "Fleet-level, cross-OEM twins remain unsolved.",
+          "funding_timing": "No dedicated near-term call found; twins appear inside other topics.",
+          "feasibility": "Requires multi-OEM data agreements.",
+          "evidence_confidence": "One validated subsystem twin (MINDED); other evidence is project plans."
+        },
+        "total": 3.85
+      }
     },
     {
       "id": "T04",
@@ -404,7 +474,24 @@
       "short_name": "Virtual homologation",
       "sector": "Digital twins & validation",
       "report_label": "Virtual homologation",
-      "report_evidence": "UN R171 allows assessed virtual tests"
+      "report_evidence": "UN R171 allows assessed virtual tests",
+      "priority": {
+        "scores": {
+          "strategic_fit": 5,
+          "rd_opportunity": 4,
+          "funding_timing": 3,
+          "feasibility": 4,
+          "evidence_confidence": 2
+        },
+        "rationale": {
+          "strategic_fit": "Virtual validation and homologation are BLUE services; Naples V&V centre.",
+          "rd_opportunity": "Credibility methods for bus/coach ADAS and shuttles are little documented.",
+          "funding_timing": "Regulation (UN R171) opens the door, but uptake is gradual and no call is targeted.",
+          "feasibility": "Mostly in-house simulation work plus a technical service partner.",
+          "evidence_confidence": "Provisional TRL: no public type approval using virtual evidence found."
+        },
+        "total": 3.9
+      }
     },
     {
       "id": "T05",
@@ -481,7 +568,24 @@
       "short_name": "Level-4 urban shuttles",
       "sector": "AI & automation",
       "report_label": "Level-4 shuttles",
-      "report_evidence": "Driverless at Zurich Airport; operator on roads"
+      "report_evidence": "Driverless at Zurich Airport; operator on roads",
+      "priority": {
+        "scores": {
+          "strategic_fit": 3,
+          "rd_opportunity": 3,
+          "funding_timing": 3,
+          "feasibility": 3,
+          "evidence_confidence": 4
+        },
+        "rationale": {
+          "strategic_fit": "Extends B4IA Level-3 work, but L4 software stacks come from specialist AV firms.",
+          "rd_opportunity": "Driverless operation in mixed urban traffic is open, but crowded with well-funded players.",
+          "funding_timing": "Turin testbed candidacy is a local signal; no BLUE-specific call identified.",
+          "feasibility": "Needs an AV technology partner and operator.",
+          "evidence_confidence": "Large EU trial (SHOW) and an official airport announcement."
+        },
+        "total": 3.1
+      }
     },
     {
       "id": "T06",
@@ -541,7 +645,24 @@
       "short_name": "Passports & circular data",
       "sector": "Circularity",
       "report_label": "Passports, circular data",
-      "report_evidence": "Passport law; Catena-X pilot"
+      "report_evidence": "Passport law; Catena-X pilot",
+      "priority": {
+        "scores": {
+          "strategic_fit": 4,
+          "rd_opportunity": 5,
+          "funding_timing": 5,
+          "feasibility": 3,
+          "evidence_confidence": 4
+        },
+        "rationale": {
+          "strategic_fit": "BLUE's profile names reuse, remanufacturing and second-life decisions, LCA and design for disassembly.",
+          "rd_opportunity": "Component-level passports linked to operating loads are research activities in call D5-03.",
+          "funding_timing": "Battery passport Feb 2027; call D5-03 opens Dec 2026.",
+          "feasibility": "Needs OEM/operator data access and a consortium; the components are well defined.",
+          "evidence_confidence": "Legal text plus an industry data-exchange pilot."
+        },
+        "total": 4.3
+      }
     },
     {
       "id": "T07",
@@ -582,7 +703,24 @@
       "short_name": "AI surrogates for CAE",
       "sector": "AI & automation",
       "report_label": "AI surrogates for CAE",
-      "report_evidence": "Commercial CFD surrogate (May 2026)"
+      "report_evidence": "Commercial CFD surrogate (May 2026)",
+      "priority": {
+        "scores": {
+          "strategic_fit": 4,
+          "rd_opportunity": 4,
+          "funding_timing": 2,
+          "feasibility": 4,
+          "evidence_confidence": 3
+        },
+        "rationale": {
+          "strategic_fit": "Simulation is central to BLUE; AI-assisted design is in its profile.",
+          "rd_opportunity": "Trusted surrogates with quantified error are unsolved.",
+          "funding_timing": "No targeted call found; timing is driven by clients and tools.",
+          "feasibility": "BLUE owns past CFD/FEM results that could train surrogates.",
+          "evidence_confidence": "Product launch is vendor-reported."
+        },
+        "total": 3.5
+      }
     },
     {
       "id": "T08",
@@ -644,7 +782,24 @@
       "short_name": "Hydrogen hybrid buses",
       "sector": "Electrification",
       "report_label": "Hydrogen hybrid buses",
-      "report_evidence": "In service: Lorient, Bologna"
+      "report_evidence": "In service: Lorient, Bologna",
+      "priority": {
+        "scores": {
+          "strategic_fit": 4,
+          "rd_opportunity": 2,
+          "funding_timing": 2,
+          "feasibility": 4,
+          "evidence_confidence": 5
+        },
+        "rationale": {
+          "strategic_fit": "BLUE already leads B4IA on hydrogen-hybrid minibuses.",
+          "rd_opportunity": "Mature technology; open questions are economic, not engineering.",
+          "funding_timing": "No new targeted call; market split with battery-electric still unclear.",
+          "feasibility": "Existing B4IA know-how and partners.",
+          "evidence_confidence": "Buses in regular public service in two cities."
+        },
+        "total": 3.2
+      }
     }
   ],
   "recommended_rd": {
