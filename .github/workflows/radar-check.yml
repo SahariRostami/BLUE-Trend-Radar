@@ -46,7 +46,8 @@ jobs:
           python tools/radar.py csv
           python tools/radar.py build
           python tools/radar.py table
-          git diff --exit-code -- docs/index.html data/trends.csv report/radar_table.tex \
+          python tools/radar.py score
+          git diff --exit-code -- docs/index.html data/trends.csv report/radar_table.tex research/PRIORITIZATION.md \
             || (echo "Run 'python tools/radar.py all', recompile the report and commit." && exit 1)
 
       - name: Open or update the review issue when something is due
